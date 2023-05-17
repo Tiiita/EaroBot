@@ -27,7 +27,7 @@ You need a BungeeCord proxy server. Put the jar into the plugins folder and rest
 **STEP 4**:
 A folder with the name "EaroBot" should be created now. There you can find the config.yml where you can change everything you want.
 If you change anything, restart the server. Reloading will work (I made a reload bot reboot) but I would HIGHLY recommend to not
-reload your bungeecord server. Just restart it and you i'll be fine :)
+reload your bungeecord server. Just restart it and you will be fine :)
 
 **STEP 5**:
 Open your discord and type `/help`.
