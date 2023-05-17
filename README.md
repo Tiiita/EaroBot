@@ -3,7 +3,7 @@ EaroMC Discord bot (Public).
 The bot is mainly developed for the EaroMC discord but everyone can invite the bot
 and can use most of the features.
 
-Some Feautures:
+Some Features:
 
 - Player logging
 - Welcoming new users
