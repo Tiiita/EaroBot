@@ -19,11 +19,12 @@ you can simply click on the following link to invite the bot.
 https://discord.com/api/oauth2/authorize?client_id=1086011944512798780&permissions=8&scope=bot
 
 **STEP 2**:
-Navigate to your server and type `help` to get information how to configure the bot.
+Navigate to your server and type `/help` to get information how to configure the bot.
 
 **STEP 3**:
 Have fun with the features :D
 
+# General
 Please report any bugs by messaging Tiiita#1044 or just open a issue. 
 
 This bot has been created by Tiiita!
