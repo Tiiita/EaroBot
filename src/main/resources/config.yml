@@ -1,0 +1,8 @@
+token: 'MTA4NjAxMTk0NDUxMjc5ODc4MA.GWGveO.5n86GK7BbnC7mXZN52FVEX7jde70C78spMsSzk'
+bot-activity: 'earomc.net'
+
+player-logs:
+  enabled: false
+  guilds:
+    326708263787823106:
+      channel:
