@@ -8,11 +8,13 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.md_5.bungee.api.ProxyServer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 /**
  * Created on März 17, 2023 | 13:54:08
@@ -63,6 +65,7 @@ public class TicketManager {
                 String roleId = optional.get();
                 Role role = jda.getRoleById(roleId);
                 if (role != null) {
+                    ProxyServer.getInstance().getLogger().log(Level.SEVERE, "Role should not be null!");
                     return CompletableFuture.completedFuture(role);
                 }
             }
