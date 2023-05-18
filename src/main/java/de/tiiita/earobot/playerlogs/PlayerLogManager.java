@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.awt.*;
 import java.util.logging.Level;
 
 /**
@@ -42,6 +43,7 @@ public class PlayerLogManager {
     private MessageEmbed getLogMessage(LogType logType, ProxiedPlayer player) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(logType.getDisplay());
+        embedBuilder.setColor(Color.WHITE);
         embedBuilder.addField("Name", player.getName(), true);
         embedBuilder.addField("UUID", player.getUniqueId().toString(), true);
         embedBuilder.addField("Forge User", getIsForgeMsg(player), true);
