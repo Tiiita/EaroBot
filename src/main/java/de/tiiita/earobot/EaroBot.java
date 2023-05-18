@@ -109,7 +109,7 @@ public final class EaroBot extends Plugin {
                 .submit();
 
         registerCommand(guildId, "send-ticket-message", "Send the ticket creation panel", new SendTicketMessageCommand());
-        registerCommand(guildId, "set-ticket-role", "Set the support role for tickets", new SetTicketRoleCommand());
+        registerCommand(guildId, "set-ticket-role", "Set the support role for tickets", new SetTicketRoleCommand(dataManager));
 
     }
     private void registerCommands() {
