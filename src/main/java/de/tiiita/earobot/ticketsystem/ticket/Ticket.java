@@ -41,7 +41,6 @@ public class Ticket {
     public void open(Member creator, Guild guild) {
         try {
             ticketManager.getTicketRole(guild.getId()).whenComplete((role, throwable) -> {
-                throwable.printStackTrace();
                 if (role == null) {
                     ProxyServer.getInstance().getLogger().log(Level.SEVERE, "NULL!");
 

@@ -63,10 +63,7 @@ public class TicketManager {
         return dataManager.getIDData(guildId, Columns.TICKET_ROLE.get()).thenApply(optional -> {
             if (!optional.isPresent()) return null;
             String id = optional.get();
-
             Role role = jda.getRoleById(id);
-
-            ProxyServer.getInstance().getLogger().log(Level.SEVERE, "ROLE: " + role.getAsMention());
             return jda.getRoleById(id);
         });
     }

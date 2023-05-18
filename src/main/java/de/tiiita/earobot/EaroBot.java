@@ -52,11 +52,13 @@ public final class EaroBot extends Plugin {
         loadConfig("config.yml");
         this.config = new Config("config.yml", getDataFolder(), this);
 
+
+        //DO NOT REGISTER ANYTHING THAT NEED *JDA* BEFORE setupBot()!
         this.database = new SQLite(this);
         this.dataManager = new DataManager(database);
-        this.ticketManager = new TicketManager(jda, dataManager);
         setupBot(config.getString("token"), config.getString("bot-activity"));
         //This has to be called after bot setup
+        this.ticketManager = new TicketManager(jda, dataManager);
         this.playerLogManager = new PlayerLogManager(config, jda);
         getProxy().getPluginManager().registerListener(this, new PlayerConnectionListener(playerLogManager));
 
