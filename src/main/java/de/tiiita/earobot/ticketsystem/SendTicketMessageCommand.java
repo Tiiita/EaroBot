@@ -32,7 +32,7 @@ public class SendTicketMessageCommand extends ListenerAdapter {
         EmbedBuilder ticketEmbed = new EmbedBuilder();
         ticketEmbed.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
         ticketEmbed.setTitle("Create Ticket");
-        ticketEmbed.setColor(Color.GREEN);
+        ticketEmbed.setColor(Color.WHITE);
 
 
         ticketEmbed.setDescription("Below you can see several buttons for different Tickets."
@@ -47,11 +47,10 @@ public class SendTicketMessageCommand extends ListenerAdapter {
         event.getChannel().sendMessageEmbeds(ticketEmbed.build())
                 .addActionRow(buttons).submit();
         event.reply("You have sent the panel!").setEphemeral(true).submit();
-
         buttons.clear();
     }
 
     private Button createButton(String id, String label) {
-        return Button.success(id, label);
+        return Button.danger(id, label);
     }
 }

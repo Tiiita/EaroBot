@@ -54,7 +54,7 @@ public class Ticket {
 
             EmbedBuilder embed = new EmbedBuilder();
             embed.setFooter(TimeUtil.getTime(), jda.getSelfUser().getAvatarUrl());
-            embed.setColor(Color.GREEN);
+            embed.setColor(Color.WHITE);
             if (ticketType == TicketType.SUPPORT) {
                 embed.setTitle("Support");
             } else embed.setTitle("Rank Application");
