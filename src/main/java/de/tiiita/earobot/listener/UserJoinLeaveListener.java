@@ -35,12 +35,12 @@ public class UserJoinLeaveListener extends ListenerAdapter {
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
         String guildId = event.getGuild().getId();
         Objects.requireNonNull(getWelcomeChannel(guildId)).whenComplete((welcomeChannel, throwable) -> {
-            Member member = event.getMember();
+            User user = event.getUser();
             EmbedBuilder embed = new EmbedBuilder();
             embed.setColor(Color.WHITE);
-            embed.setThumbnail(member.getAvatarUrl());
+            embed.setThumbnail(user.getAvatarUrl());
             embed.setTitle("New Member");
-            embed.setDescription("HeyHo👋 " + member.getAsMention() + ", welcome to this Discord!");
+            embed.setDescription("HeyHo👋 " + user.getAsMention() + ", welcome to this Discord!");
             welcomeChannel.sendMessageEmbeds(embed.build()).submit();
         });
     }
