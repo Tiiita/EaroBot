@@ -1,5 +1,6 @@
 package de.tiiita.earobot.command;
 
+import de.tiiita.earobot.util.Columns;
 import de.tiiita.earobot.util.EmbedUtil;
 import de.tiiita.earobot.util.database.DataManager;
 import net.dv8tion.jda.api.Permission;
@@ -33,7 +34,7 @@ public class SetWelcomeCommand extends ListenerAdapter {
         String guildId = event.getGuild().getId();
         String channelId = event.getChannel().getId();
 
-        dataManager.setWelcomeChannel(guildId, channelId).whenComplete((unused, throwable) -> {
+        dataManager.setIDData(guildId, Columns.WELCOME_CHANNEL.get(), channelId).whenComplete((unused, throwable) -> {
             MessageEmbed embed = EmbedUtil.getSimpleEmbed(Color.WHITE, "You set the welcome channel to: " + event.getChannel().getAsMention() + "\n"
                     + "The welcome message will be send in here.");
             event.replyEmbeds(embed).setEphemeral(true).submit();

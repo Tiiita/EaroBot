@@ -1,5 +1,6 @@
 package de.tiiita.earobot.listener;
 
+import de.tiiita.earobot.util.Columns;
 import de.tiiita.earobot.util.database.DataManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -64,7 +65,7 @@ public class UserJoinLeaveListener extends ListenerAdapter {
 
     @Nullable
     private CompletableFuture<TextChannel> getWelcomeChannel(String guildId) {
-        return dataManager.getWelcomeChannel(guildId).handle((optionalId, throwable) -> {
+        return dataManager.getIDData(guildId, Columns.WELCOME_CHANNEL.get()).handle((optionalId, throwable) -> {
             return optionalId.map(jda::getTextChannelById).orElse(null);
         });
     }

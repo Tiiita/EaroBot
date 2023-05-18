@@ -1,5 +1,6 @@
 package de.tiiita.earobot.listener;
 
+import de.tiiita.earobot.util.Columns;
 import de.tiiita.earobot.util.database.DataManager;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -28,7 +29,7 @@ public class MessageReceiveListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String guildId = event.getGuild().getId();
-        dataManager.getIdeasChannel(guildId).whenComplete((optionalId, throwable) -> {
+        dataManager.getIDData(guildId, Columns.IDEAS_CHANNEL.get()).whenComplete((optionalId, throwable) -> {
             if (optionalId.isPresent()) {
                 TextChannel ideasChannel = event.getJDA().getTextChannelById(optionalId.get());
                 if (ideasChannel == null) {

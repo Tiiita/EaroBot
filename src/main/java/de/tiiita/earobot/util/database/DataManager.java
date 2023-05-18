@@ -43,57 +43,30 @@ public class DataManager {
             }
         });
     }
-    public CompletableFuture<Optional<String>> getWelcomeChannel(String guildId) {
+
+    public CompletableFuture<Optional<String>> getIDData(String guildId, String column) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection conn = getConnection(); PreparedStatement statement = conn.prepareStatement(
-                    "select welcome_channel from " + table + " where guildId = ?;"
+                    "select ? from " + table + " where guildId = ?;"
             )) {
-                statement.setString(1, guildId);
+                statement.setString(1, column);
+                statement.setString(2, guildId);
                 ResultSet resultSet = statement.executeQuery();
-                if (resultSet.next()) return Optional.ofNullable(resultSet.getString("welcome_channel"));
+                if (resultSet.next()) return Optional.ofNullable(resultSet.getString(column));
                 return Optional.empty();
             } catch (SQLException e) {
                 return Optional.empty();
             }
         });
     }
-
-    public CompletableFuture<Optional<String>> getIdeasChannel(String guildId) {
-        return CompletableFuture.supplyAsync(() -> {
-            try (Connection conn = getConnection(); PreparedStatement statement = conn.prepareStatement(
-                    "select ideas_channel from " + table + " where guildId = ?;"
-            )) {
-                statement.setString(1, guildId);
-                ResultSet resultSet = statement.executeQuery();
-                if (resultSet.next()) return Optional.ofNullable(resultSet.getString("ideas_channel"));
-                return Optional.empty();
-            } catch (SQLException e) {
-                return Optional.empty();
-            }
-        });
-    }
-
-    public CompletableFuture<Void> setWelcomeChannel(String guildId, String channelId) {
+    public CompletableFuture<Void> setIDData(String guildId, String column, String valueId) {
         return CompletableFuture.runAsync(() -> {
             try (Connection conn = getConnection(); PreparedStatement statement = conn.prepareStatement(
-                    "UPDATE " + table + " SET welcome_channel = ? WHERE guildId = ?;"
+                    "UPDATE " + table + " SET ? = ? WHERE guildId = ?;"
             )) {
-                statement.setString(1, channelId);
-                statement.setString(2, guildId);
-                statement.execute();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    public CompletableFuture<Void> setIdeasChannel(String guildId, String channelId) {
-        return CompletableFuture.runAsync(() -> {
-            try (Connection conn = getConnection(); PreparedStatement statement = conn.prepareStatement(
-                    "UPDATE " + table + " SET ideas_channel = ? WHERE guildId = ?;"
-            )) {
-                statement.setString(1, channelId);
-                statement.setString(2, guildId);
+                statement.setString(1, column);
+                statement.setString(2, valueId);
+                statement.setString(3, guildId);
                 statement.execute();
             } catch (SQLException e) {
                 e.printStackTrace();

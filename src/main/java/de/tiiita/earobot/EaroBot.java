@@ -4,6 +4,10 @@ import de.tiiita.earobot.command.*;
 import de.tiiita.earobot.listener.GuildJoinListener;
 import de.tiiita.earobot.listener.MessageReceiveListener;
 import de.tiiita.earobot.listener.UserJoinLeaveListener;
+import de.tiiita.earobot.ticketsystem.SendTicketMessageCommand;
+import de.tiiita.earobot.ticketsystem.SetTicketRoleCommand;
+import de.tiiita.earobot.ticketsystem.TicketButtonListener;
+import de.tiiita.earobot.ticketsystem.TicketManager;
 import de.tiiita.earobot.util.database.DataManager;
 import de.tiiita.earobot.util.database.SQLite;
 import net.dv8tion.jda.api.JDA;
@@ -35,6 +39,7 @@ public final class EaroBot extends Plugin {
     private Config config;
     private DataManager dataManager;
     private SQLite database;
+    private TicketManager ticketManager;
 
     @Override
     public void onEnable() {
@@ -45,6 +50,7 @@ public final class EaroBot extends Plugin {
 
         this.database = new SQLite(this);
         this.dataManager = new DataManager(database);
+        this.ticketManager = new TicketManager(jda, dataManager);
         setupDiscord(config.getString("token"), config.getString("bot-activity"));
         getLogger().log(Level.INFO, "Done! Discord bot is ready!");
     }
@@ -53,6 +59,7 @@ public final class EaroBot extends Plugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        ticketManager.closeAllTickets();
         jda.shutdown();
         getLogger().log(Level.INFO, "Shutting Bot down...");
     }
@@ -101,6 +108,8 @@ public final class EaroBot extends Plugin {
                 .addOption(OptionType.STRING, "portuguese", "Write here the update in portuguese", false)
                 .submit();
 
+        registerCommand(guildId, "send-ticket-message", "Send the ticket creation panel", new SendTicketMessageCommand());
+        registerCommand(guildId, "set-ticket-role", "Set the support role for tickets", new SetTicketRoleCommand());
 
     }
     private void registerCommands() {
@@ -117,6 +126,7 @@ public final class EaroBot extends Plugin {
         jda.addEventListener(new GuildJoinListener(this));
         jda.addEventListener(new UserJoinLeaveListener(dataManager, jda));
         jda.addEventListener(new MessageReceiveListener(dataManager));
+        jda.addEventListener(new TicketButtonListener(ticketManager));
     }
 
     //Register discord bot commands here:
