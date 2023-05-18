@@ -10,10 +10,19 @@ import java.util.Date;
  */
 public class TimeUtil {
 
-    public static String getTime() {
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm a");
-        Date date = new Date(System.currentTimeMillis());
 
+    /**
+     *
+     * @param pattern the pattern you want the time in. Type null if you want the default one.
+     * @return a string with the time in the wanted pattern.
+     */
+    public static String getTime(String pattern) {
+        String defaultPattern = "MM/dd/yyyy - HH:mm a";
+        DateFormat dateFormat;
+        if (pattern == null) {
+               dateFormat = new SimpleDateFormat(defaultPattern);
+        } else dateFormat = new SimpleDateFormat(pattern);
+        Date date = new Date(System.currentTimeMillis());
         return dateFormat.format(date);
     }
 }

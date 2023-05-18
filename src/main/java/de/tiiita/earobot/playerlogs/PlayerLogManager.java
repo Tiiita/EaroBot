@@ -2,6 +2,7 @@ package de.tiiita.earobot.playerlogs;
 
 import de.tiiita.earobot.playerlogs.version.Versions;
 import de.tiiita.earobot.util.Config;
+import de.tiiita.earobot.util.TimeUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -51,7 +52,7 @@ public class PlayerLogManager {
         embedBuilder.addField("Version", Versions.getVersionById(protocolId), true);
         embedBuilder.addField("IP", player.getSocketAddress().toString(), true);
         embedBuilder.addField("Online", "" + ProxyServer.getInstance().getOnlineCount(), true);
-
+        embedBuilder.setFooter(TimeUtil.getTime(null));
         return embedBuilder.build();
     }
 

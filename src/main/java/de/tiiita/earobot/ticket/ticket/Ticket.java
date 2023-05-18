@@ -56,7 +56,7 @@ public class Ticket {
                 this.ticketChannelId = ticketChannel.getId();
 
                 EmbedBuilder embed = new EmbedBuilder();
-                embed.setFooter(TimeUtil.getTime(), jda.getSelfUser().getAvatarUrl());
+                embed.setFooter(TimeUtil.getTime(null), jda.getSelfUser().getAvatarUrl());
                 embed.setColor(Color.WHITE);
                 if (ticketType == TicketType.SUPPORT) {
                     embed.setTitle("Support");
@@ -133,7 +133,7 @@ public class Ticket {
         ticketChannel.delete().submit();
         creator.getUser().openPrivateChannel().submit().whenComplete((privateChannel, throwable) -> {
             EmbedBuilder embed = new EmbedBuilder();
-            embed.setFooter(TimeUtil.getTime(), jda.getSelfUser().getAvatarUrl());
+            embed.setFooter(TimeUtil.getTime(null), jda.getSelfUser().getAvatarUrl());
             embed.setColor(Color.WHITE);
             embed.setTitle("Your Ticket");
             embed.setDescription("Your ticket has been closed!\n" +
