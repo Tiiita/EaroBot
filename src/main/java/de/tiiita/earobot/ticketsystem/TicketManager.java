@@ -112,10 +112,15 @@ public class TicketManager {
 
     /**
      * Close all open tickets with this!
+     * @return number of closed tickets.
      */
-    public void closeAllTickets() {
+    public int closeAllTickets() {
+        int closedTickets = 0;
         for (Ticket ticket : tickets) {
             closeTicket(ticket);
+            closedTickets++;
         }
+
+        return closedTickets;
     }
 }

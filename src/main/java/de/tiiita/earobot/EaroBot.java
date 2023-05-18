@@ -4,8 +4,9 @@ import de.tiiita.earobot.command.*;
 import de.tiiita.earobot.listener.GuildJoinListener;
 import de.tiiita.earobot.listener.MessageReceiveListener;
 import de.tiiita.earobot.listener.UserJoinLeaveListener;
-import de.tiiita.earobot.ticketsystem.SendTicketMessageCommand;
-import de.tiiita.earobot.ticketsystem.SetTicketRoleCommand;
+import de.tiiita.earobot.ticketsystem.command.CloseTicketsCommand;
+import de.tiiita.earobot.ticketsystem.command.SendTicketMessageCommand;
+import de.tiiita.earobot.ticketsystem.command.SetTicketRoleCommand;
 import de.tiiita.earobot.ticketsystem.TicketButtonListener;
 import de.tiiita.earobot.ticketsystem.TicketManager;
 import de.tiiita.earobot.util.database.DataManager;
@@ -108,8 +109,11 @@ public final class EaroBot extends Plugin {
                 .addOption(OptionType.STRING, "portuguese", "Write here the update in portuguese", false)
                 .submit();
 
+        registerCommand(guildId, "close-tickets", "Close every open ticket.", new CloseTicketsCommand(ticketManager));
         registerCommand(guildId, "send-ticket-message", "Send the ticket creation panel", new SendTicketMessageCommand());
-        registerCommand(guildId, "set-ticket-role", "Set the support role for tickets", new SetTicketRoleCommand(dataManager));
+        registerCommand(guildId, "set-ticket-role", "Set the support role for tickets", new SetTicketRoleCommand(dataManager))
+                .addOption(OptionType.ROLE, "role", "Select the ticket listening role!", true)
+                .submit();
 
     }
     private void registerCommands() {
