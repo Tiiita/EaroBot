@@ -47,10 +47,9 @@ public class DataManager {
     public CompletableFuture<Optional<String>> getIDData(String guildId, String column) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection conn = getConnection(); PreparedStatement statement = conn.prepareStatement(
-                    "select ? from " + table + " where guildId = ?;"
+                    "select " + column + " from " + table + " where guildId = ?;"
             )) {
-                statement.setString(1, column);
-                statement.setString(2, guildId);
+                statement.setString(1, guildId);
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) return Optional.ofNullable(resultSet.getString(column));
                 return Optional.empty();
@@ -62,11 +61,10 @@ public class DataManager {
     public CompletableFuture<Void> setIDData(String guildId, String column, String valueId) {
         return CompletableFuture.runAsync(() -> {
             try (Connection conn = getConnection(); PreparedStatement statement = conn.prepareStatement(
-                    "UPDATE " + table + " SET ? = ? WHERE guildId = ?;"
+                    "UPDATE " + table + " SET " + column + " = ? WHERE guildId = ?;"
             )) {
-                statement.setString(1, column);
-                statement.setString(2, valueId);
-                statement.setString(3, guildId);
+                statement.setString(1, valueId);
+                statement.setString(2, guildId);
                 statement.execute();
             } catch (SQLException e) {
                 e.printStackTrace();
