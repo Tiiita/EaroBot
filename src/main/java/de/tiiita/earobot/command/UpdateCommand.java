@@ -4,10 +4,16 @@ import de.tiiita.earobot.util.EmbedUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import de.tiiita.earobot.EaroBot;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -34,28 +40,56 @@ public class UpdateCommand extends ListenerAdapter {
             return;
         }
 
-        OptionMapping germanOption = event.getOption("german");
-        OptionMapping englishOption = event.getOption("english");
-        OptionMapping portugueseOption = event.getOption("portuguese");
+        //Modal
+        TextInput englishInput = TextInput.create("english-input", "English", TextInputStyle.PARAGRAPH)
+                .setMinLength(1)
+                .setMaxLength(4000)
+                .setRequired(true)
+                .setPlaceholder("Write here the information in english :)")
+                .build();
 
+        TextInput germanInput = TextInput.create("german-input", "Deutsch", TextInputStyle.PARAGRAPH)
+                .setMinLength(1)
+                .setMaxLength(4000)
+                .setRequired(true)
+                .setPlaceholder("Write here the information in german :)")
+                .build();
+        TextInput portugueseInput = TextInput.create("portuguese-input", "Português", TextInputStyle.PARAGRAPH)
+                .setMinLength(1)
+                .setRequired(false)
+                .setMaxLength(4000)
+                .setPlaceholder("Write here the information in portuguese (Write nothing if you do not want a message in this language!)")
+                .build();
+
+        Modal modal = Modal.create("update-modal", "Create Update Message")
+                .addActionRows(ActionRow.of(englishInput), ActionRow.of(germanInput), ActionRow.of(portugueseInput))
+                .build();
+        event.replyModal(modal).submit();
+    }
+
+
+    @Override
+    public void onModalInteraction(@NotNull ModalInteractionEvent event) {
+        if (!event.getModalId().equals("information-modal")) return;
+
+        String englishInput = event.getValue("english-input").getAsString();
+        String germanInput = event.getValue("german-input").getAsString();
+        String portugueseInput = event.getValue("portuguese-input").getAsString();
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Information");
-        embed.setColor(Color.WHITE);;
-        embed.addField("» English", englishOption.getAsString(), false);
-        embed.addField("» Deutsch", germanOption.getAsString(), false);
-        if (portugueseOption != null) {
-            embed.addField("» Português", portugueseOption.getAsString(), false);
+        embed.setColor(Color.WHITE);
+        embed.setDescription(event.getGuild().getPublicRole().getAsMention() + "\nOur network published a new upate!");
+
+        embed.addField("» \uD83C\uDDEC\uD83C\uDDE7 English", englishInput, false);
+        embed.addField("» \uD83C\uDDE9\uD83C\uDDEA Deutsch", germanInput, false);
+        if (!portugueseInput.equalsIgnoreCase("")) {
+            embed.addField("» \uD83C\uDDE7\uD83C\uDDF7 Português", germanInput, false);
         }
         embed.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
-
-
-        event.getChannel().sendMessage(Objects.requireNonNull(event.getGuild()).getPublicRole().getAsMention()).submit();
+        embed.setFooter("earomc.net", event.getJDA().getSelfUser().getAvatarUrl());
 
         event.getChannel().sendMessageEmbeds(embed.build()).submit();
-
-
-        MessageEmbed reply = EmbedUtil.getSimpleEmbed(Color.WHITE, "You have published the update!");
-        event.replyEmbeds(reply).setEphemeral(true).submit();
+        event.reply("You successfully published a new update!").setEphemeral(true).submit();
     }
 }
