@@ -112,11 +112,7 @@ public final class EaroBot extends Plugin {
         registerCommand(guildId, "set-welcome-channel", "With this command you can set the welcome channel for the bot!", new SetWelcomeCommand(dataManager));
         registerCommand(guildId, "help", "Get help or information!", new HelpCommand());
         registerCommand(guildId, "set-ideas-channel", "With this command you can set the channel where the player adds automatic vote reactions!", new SetIdeasCommand(dataManager));
-        Objects.requireNonNull(registerCommand(guildId, "update", "With this command admin can announce updates!", new UpdateCommand(this)))
-                .addOption(OptionType.STRING, "english", "Write here the update in english", true)
-                .addOption(OptionType.STRING, "german", "Write here the update in german", true)
-                .addOption(OptionType.STRING, "portuguese", "Write here the update in portuguese", false)
-                .submit();
+        Objects.requireNonNull(registerCommand(guildId, "update", "With this command admin can announce updates!", new UpdateCommand(this)));
 
         registerCommand(guildId, "close-tickets", "Close every open ticket.", new CloseTicketsCommand(ticketManager));
         registerCommand(guildId, "send-ticket-message", "Send the ticket creation panel", new SendTicketMessageCommand());

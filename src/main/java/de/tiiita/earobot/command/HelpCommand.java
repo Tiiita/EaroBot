@@ -35,12 +35,17 @@ public class HelpCommand extends ListenerAdapter {
                 + "- Send Welcome messages (1)\n"
                 + "- Reacting to ideas (2)\n"
                 + "- Announce Updates (3)\n"
-                + "- Clear discord from raids (4)\n\n"
+                + "- Ticket system (4)"
+                + "- Clear discord from raids (5)\n\n"
                 + "(1) Go into the channel you want the messages and type **/set-welcome-channel**\n"
                 + "Done? Every user join and leave will be send in this channel!\n\n"
                 + "(2) You can choose the reaction channel with **/set-ideas-channel**\n\n"
                 + "(3) You can announce updates in the channel you are in with **/update**\n\n"
-                + "(4) With **/clear-spam** you can remove raid messages", false);
+                + "(4) With **/clear-spam** you can remove raid messages\n\n"
+                + "(5) You have to set a ticket role with **/set-ticket-role**\n"
+                + "Done with that? To complete the ticket setup, go into a channel where you\n"
+                + "want the panel and type **/send-ticket-message**. A Panel will show up. Done!\n"
+                + "Currently 2 panels will show. This is a bug... Please delete one!", false);
 
         embedBuilder.addField("Bot Information",
                 "Author: Tiiita\n"
