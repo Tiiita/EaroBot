@@ -28,6 +28,6 @@ public class CloseTicketsCommand extends ListenerAdapter {
         }
 
         int closedTickets = ticketManager.closeAllTickets();
-        event.reply("You have closed " + closedTickets + " tickets!").submit();
+        event.reply("You have closed " + closedTickets + " tickets!").setEphemeral(true).submit();
     }
 }

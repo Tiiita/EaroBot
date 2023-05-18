@@ -123,7 +123,6 @@ public class Ticket {
 
     public void close() {
         if (this.ticketChannelId == null) {
-            logger.log(Level.SEVERE, "Could not find channel id!");
             return;
         }
 

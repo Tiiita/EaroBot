@@ -26,7 +26,6 @@ public class TicketButtonListener extends ListenerAdapter {
         if (event.getButton().getId() == null) return;
 
         if (event.getButton().getId().equals("ticketCloseButton")) {
-
             String guildId = event.getGuild().getId();
             Objects.requireNonNull(ticketManager.getTicketRole(guildId)).whenComplete((role, throwable) -> {
                 if (Objects.requireNonNull(event.getMember()).getRoles().contains(role)) {
