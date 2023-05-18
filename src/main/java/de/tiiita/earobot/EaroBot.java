@@ -55,8 +55,9 @@ public final class EaroBot extends Plugin {
         this.database = new SQLite(this);
         this.dataManager = new DataManager(database);
         this.ticketManager = new TicketManager(jda, dataManager);
+        setupBot(config.getString("token"), config.getString("bot-activity"));
+        //This has to be called after bot setup
         this.playerLogManager = new PlayerLogManager(config, jda);
-        setupDiscord(config.getString("token"), config.getString("bot-activity"));
         getLogger().log(Level.INFO, "Done! Discord bot is ready!");
     }
 
@@ -69,7 +70,7 @@ public final class EaroBot extends Plugin {
         getLogger().log(Level.INFO, "Shutting Bot down...");
     }
 
-    private void setupDiscord(String token, String activity) {
+    private void setupBot(String token, String activity) {
         connectToDiscord(token, activity);
 
         //Minecraft:
