@@ -133,7 +133,7 @@ public class Ticket {
         creator.getUser().openPrivateChannel().submit().whenComplete((privateChannel, throwable) -> {
             EmbedBuilder embed = new EmbedBuilder();
             embed.setFooter(TimeUtil.getTime(), jda.getSelfUser().getAvatarUrl());
-            embed.setColor(Color.GREEN);
+            embed.setColor(Color.WHITE);
             embed.setTitle("Your Ticket");
             embed.setDescription("Your ticket has been closed!\n" +
                     "You can now create new tickets.");
