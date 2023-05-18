@@ -58,6 +58,8 @@ public final class EaroBot extends Plugin {
         setupBot(config.getString("token"), config.getString("bot-activity"));
         //This has to be called after bot setup
         this.playerLogManager = new PlayerLogManager(config, jda);
+        getProxy().getPluginManager().registerListener(this, new PlayerConnectionListener(playerLogManager));
+
         getLogger().log(Level.INFO, "Done! Discord bot is ready!");
     }
 
@@ -72,11 +74,6 @@ public final class EaroBot extends Plugin {
 
     private void setupBot(String token, String activity) {
         connectToDiscord(token, activity);
-
-        //Minecraft:
-        getProxy().getPluginManager().registerListener(this, new PlayerConnectionListener(playerLogManager));
-
-        //Discord
         registerGuilds().whenComplete((unused, throwable) -> {
             registerListener();
             registerCommands();
