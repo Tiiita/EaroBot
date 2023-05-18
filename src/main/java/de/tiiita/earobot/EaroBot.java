@@ -4,11 +4,13 @@ import de.tiiita.earobot.command.*;
 import de.tiiita.earobot.listener.GuildJoinListener;
 import de.tiiita.earobot.listener.MessageReceiveListener;
 import de.tiiita.earobot.listener.UserJoinLeaveListener;
-import de.tiiita.earobot.ticketsystem.command.CloseTicketsCommand;
-import de.tiiita.earobot.ticketsystem.command.SendTicketMessageCommand;
-import de.tiiita.earobot.ticketsystem.command.SetTicketRoleCommand;
-import de.tiiita.earobot.ticketsystem.TicketButtonListener;
-import de.tiiita.earobot.ticketsystem.TicketManager;
+import de.tiiita.earobot.playerlogs.PlayerConnectionListener;
+import de.tiiita.earobot.playerlogs.PlayerLogManager;
+import de.tiiita.earobot.ticket.command.CloseTicketsCommand;
+import de.tiiita.earobot.ticket.command.SendTicketMessageCommand;
+import de.tiiita.earobot.ticket.command.SetTicketRoleCommand;
+import de.tiiita.earobot.ticket.TicketButtonListener;
+import de.tiiita.earobot.ticket.TicketManager;
 import de.tiiita.earobot.util.database.DataManager;
 import de.tiiita.earobot.util.database.SQLite;
 import net.dv8tion.jda.api.JDA;
@@ -41,6 +43,7 @@ public final class EaroBot extends Plugin {
     private DataManager dataManager;
     private SQLite database;
     private TicketManager ticketManager;
+    private PlayerLogManager playerLogManager;
 
     @Override
     public void onEnable() {
@@ -52,6 +55,7 @@ public final class EaroBot extends Plugin {
         this.database = new SQLite(this);
         this.dataManager = new DataManager(database);
         this.ticketManager = new TicketManager(jda, dataManager);
+        this.playerLogManager = new PlayerLogManager(config, jda);
         setupDiscord(config.getString("token"), config.getString("bot-activity"));
         getLogger().log(Level.INFO, "Done! Discord bot is ready!");
     }
@@ -67,6 +71,11 @@ public final class EaroBot extends Plugin {
 
     private void setupDiscord(String token, String activity) {
         connectToDiscord(token, activity);
+
+        //Minecraft:
+        getProxy().getPluginManager().registerListener(this, new PlayerConnectionListener(playerLogManager));
+
+        //Discord
         registerGuilds().whenComplete((unused, throwable) -> {
             registerListener();
             registerCommands();

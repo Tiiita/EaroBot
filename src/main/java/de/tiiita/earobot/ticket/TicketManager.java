@@ -1,7 +1,7 @@
-package de.tiiita.earobot.ticketsystem;
+package de.tiiita.earobot.ticket;
 
-import de.tiiita.earobot.ticketsystem.ticket.Ticket;
-import de.tiiita.earobot.ticketsystem.ticket.TicketType;
+import de.tiiita.earobot.ticket.ticket.Ticket;
+import de.tiiita.earobot.ticket.ticket.TicketType;
 import de.tiiita.earobot.util.Columns;
 import de.tiiita.earobot.util.database.DataManager;
 import net.dv8tion.jda.api.JDA;
@@ -52,13 +52,24 @@ public class TicketManager {
     /**
      * Every guild that wants to use the ticket system must configure a ticket role. That is simply a role
      * that can manage tickets. Mostly admin roles.
+     *
      * @param guildId the guildId where the system searches in the database.
-     * @return The role if found. If the role was not set or was not found with jda it returns null.
+     * @return The role if found. If the role was not set or was not found with jda it returns CompletableFuture with value null.
      */
     @Nullable
     public CompletableFuture<Role> getTicketRole(String guildId) {
-        return dataManager.getIDData(guildId, Columns.TICKET_ROLE.get()).thenApply(optional -> optional.map(jda::getRoleById).orElse(null));
+        return dataManager.getIDData(guildId, Columns.TICKET_ROLE.get()).thenCompose(optional -> {
+            if (optional.isPresent()) {
+                String roleId = optional.get();
+                Role role = jda.getRoleById(roleId);
+                if (role != null) {
+                    return CompletableFuture.completedFuture(role);
+                }
+            }
+            return CompletableFuture.completedFuture(null);
+        });
     }
+
     /**
      * @param creator that creates a ticket! A User can only create once a time, so you can get the current open one!
      * @return found ticket from list, or null if the user has not open ticket.
@@ -76,6 +87,7 @@ public class TicketManager {
 
     /**
      * Get a ticket by its channel id.
+     *
      * @param channelId channel id where the function gets a ticket from.
      * @return the found ticket or null of no ticket was found.
      */
@@ -112,15 +124,17 @@ public class TicketManager {
 
     /**
      * Close all open tickets with this!
+     *
      * @return number of closed tickets.
      */
     public int closeAllTickets() {
         int closedTickets = 0;
         for (Ticket ticket : tickets) {
-            closeTicket(ticket);
+            ticket.close();
             closedTickets++;
         }
 
+        tickets.clear();
         return closedTickets;
     }
 }

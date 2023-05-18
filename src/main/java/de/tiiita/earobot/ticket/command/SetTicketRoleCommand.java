@@ -1,4 +1,4 @@
-package de.tiiita.earobot.ticketsystem.command;
+package de.tiiita.earobot.ticket.command;
 
 import de.tiiita.earobot.util.Columns;
 import de.tiiita.earobot.util.database.DataManager;

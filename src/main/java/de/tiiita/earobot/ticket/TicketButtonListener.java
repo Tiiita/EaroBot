@@ -1,8 +1,7 @@
-package de.tiiita.earobot.ticketsystem;
+package de.tiiita.earobot.ticket;
 
-import de.tiiita.earobot.ticketsystem.ticket.Ticket;
-import de.tiiita.earobot.ticketsystem.ticket.TicketType;
-import net.dv8tion.jda.api.entities.Role;
+import de.tiiita.earobot.ticket.ticket.Ticket;
+import de.tiiita.earobot.ticket.ticket.TicketType;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
