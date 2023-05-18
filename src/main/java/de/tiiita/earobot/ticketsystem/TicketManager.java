@@ -1,7 +1,7 @@
-package de.tiiita.earobot.ticket;
+package de.tiiita.earobot.ticketsystem;
 
-import de.tiiita.earobot.ticket.ticket.Ticket;
-import de.tiiita.earobot.ticket.ticket.TicketType;
+import de.tiiita.earobot.ticketsystem.ticket.Ticket;
+import de.tiiita.earobot.ticketsystem.ticket.TicketType;
 import de.tiiita.earobot.util.Columns;
 import de.tiiita.earobot.util.database.DataManager;
 import net.dv8tion.jda.api.JDA;
@@ -56,20 +56,18 @@ public class TicketManager {
      * that can manage tickets. Mostly admin roles.
      *
      * @param guildId the guildId where the system searches in the database.
-     * @return The role if found. If the role was not set or was not found with jda it returns CompletableFuture with value null.
+     * @return The role if found. If the role was not set or was not found with jda it returns null.
      */
     @Nullable
     public CompletableFuture<Role> getTicketRole(String guildId) {
-        return dataManager.getIDData(guildId, Columns.TICKET_ROLE.get()).thenCompose(optional -> {
-            if (optional.isPresent()) {
-                String roleId = optional.get();
-                Role role = jda.getRoleById(roleId);
-                if (role != null) {
-                    ProxyServer.getInstance().getLogger().log(Level.SEVERE, "Role should not be null!");
-                    return CompletableFuture.completedFuture(role);
-                }
-            }
-            return CompletableFuture.completedFuture(null);
+        return dataManager.getIDData(guildId, Columns.TICKET_ROLE.get()).thenApply(optional -> {
+            if (!optional.isPresent()) return null;
+            String id = optional.get();
+
+            Role role = jda.getRoleById(id);
+
+            ProxyServer.getInstance().getLogger().log(Level.SEVERE, "ROLE: " + role.getAsMention());
+            return jda.getRoleById(id);
         });
     }
 

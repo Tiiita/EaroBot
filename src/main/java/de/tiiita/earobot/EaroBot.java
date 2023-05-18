@@ -6,11 +6,11 @@ import de.tiiita.earobot.listener.MessageReceiveListener;
 import de.tiiita.earobot.listener.UserJoinLeaveListener;
 import de.tiiita.earobot.playerlogs.PlayerConnectionListener;
 import de.tiiita.earobot.playerlogs.PlayerLogManager;
-import de.tiiita.earobot.ticket.command.CloseTicketsCommand;
-import de.tiiita.earobot.ticket.command.SendTicketMessageCommand;
-import de.tiiita.earobot.ticket.command.SetTicketRoleCommand;
-import de.tiiita.earobot.ticket.TicketButtonListener;
-import de.tiiita.earobot.ticket.TicketManager;
+import de.tiiita.earobot.ticketsystem.command.CloseTicketsCommand;
+import de.tiiita.earobot.ticketsystem.command.SendTicketMessageCommand;
+import de.tiiita.earobot.ticketsystem.command.SetTicketRoleCommand;
+import de.tiiita.earobot.ticketsystem.TicketButtonListener;
+import de.tiiita.earobot.ticketsystem.TicketManager;
 import de.tiiita.earobot.util.database.DataManager;
 import de.tiiita.earobot.util.database.SQLite;
 import net.dv8tion.jda.api.JDA;
@@ -69,7 +69,7 @@ public final class EaroBot extends Plugin {
         // Plugin shutdown logic
         ticketManager.closeAllTickets();
         jda.shutdown();
-        getLogger().log(Level.INFO, "Shutting Bot down...");
+        getLogger().log(Level.INFO, "Shutting down...");
     }
 
     private void setupBot(String token, String activity) {

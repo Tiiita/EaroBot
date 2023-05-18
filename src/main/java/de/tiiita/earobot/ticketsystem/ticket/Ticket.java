@@ -1,6 +1,6 @@
-package de.tiiita.earobot.ticket.ticket;
+package de.tiiita.earobot.ticketsystem.ticket;
 
-import de.tiiita.earobot.ticket.TicketManager;
+import de.tiiita.earobot.ticketsystem.TicketManager;
 import de.tiiita.earobot.util.TimeUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;

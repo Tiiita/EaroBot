@@ -1,4 +1,4 @@
-package de.tiiita.earobot.ticket.ticket;
+package de.tiiita.earobot.ticketsystem.ticket;
 
 /**
  * Created on März 19, 2023 | 18:57:58

@@ -1,6 +1,6 @@
-package de.tiiita.earobot.ticket.command;
+package de.tiiita.earobot.ticketsystem.command;
 
-import de.tiiita.earobot.ticket.TicketManager;
+import de.tiiita.earobot.ticketsystem.TicketManager;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
