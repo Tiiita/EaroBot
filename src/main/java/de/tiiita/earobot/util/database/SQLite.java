@@ -21,7 +21,6 @@ public class SQLite {
 
     private final Plugin plugin;
     private final String databaseFile;
-    private Connection connection;
     private final HikariConfig config = new HikariConfig();
     private HikariDataSource dataSource;
 
@@ -54,8 +53,8 @@ public class SQLite {
 
     public void close() {
         try {
-            if (connection != null) {
-                connection.close();
+            if (dataSource.getConnection() != null) {
+                dataSource.getConnection().close();
                 plugin.getLogger().log(Level.INFO, "The SQLite database connection has been closed!");
             }
         } catch (SQLException e) {

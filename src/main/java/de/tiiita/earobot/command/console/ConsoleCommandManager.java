@@ -1,6 +1,7 @@
 package de.tiiita.earobot.command.console;
 
 import de.tiiita.earobot.EaroBot;
+import de.tiiita.earobot.command.console.commands.EaroBotCommand;
 import de.tiiita.earobot.command.console.commands.RebootCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -30,37 +31,19 @@ public class ConsoleCommandManager implements Listener {
 
     public ConsoleCommandManager(EaroBot earoBot) {
         this.earoBot = earoBot;
-
         registerCommands();
     }
 
 
-    void registerCommands() {
+    private void registerCommands() {
         //Register every command like that
         registerCommand(new RebootCommand(earoBot));
+        registerCommand(new EaroBotCommand(this));
     }
 
-    void registerCommand(ConsoleCommand command) {
+    private void registerCommand(ConsoleCommand command) {
         registeredCommands.add(command);
         ProxyServer.getInstance().getPluginManager().registerCommand(earoBot, command);
-    }
-
-    @EventHandler
-    public void onConsoleChat(ChatEvent event) {
-        if (event.getSender() != ProxyServer.getInstance().getConsole()) return;
-        String message = event.getMessage();
-
-        if (message.equalsIgnoreCase("earobot")) {
-            sendRegisteredCommands();
-            return;
-        }
-        if (message.startsWith("earobot ")) {
-            String commandName = message.substring(8); // Extract the command name from the message
-            ConsoleCommand command = getCommandByName(commandName);
-            if (command != null) {
-                command.getAction().run();
-            }
-        } else sendRegisteredCommands();
     }
 
     /**
@@ -69,13 +52,13 @@ public class ConsoleCommandManager implements Listener {
      * @return the found command or null if nothing was found.
      */
     @Nullable
-    ConsoleCommand getCommandByName(String name) {
+    public ConsoleCommand getCommandByName(String name) {
         for (ConsoleCommand command : registeredCommands) {
             if (command.getName().equalsIgnoreCase(name)) return command;
         }
         return null;
     }
-    void sendRegisteredCommands() {
+    public void sendRegisteredCommands() {
         CommandSender console = ProxyServer.getInstance().getConsole();
         console.sendMessage(new TextComponent("Registered Commands:"));
         console.sendMessage(new TextComponent(" "));

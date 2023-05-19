@@ -1,13 +1,17 @@
 package de.tiiita.earobot.command.console;
 
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+
+import java.lang.reflect.Proxy;
 
 /**
  * Created on Mai 19, 2023 | 19:06:49
  * (●'◡'●)
  */
-public class ConsoleCommand extends Command {
+public abstract class ConsoleCommand extends Command {
 
 
     private final String name;
@@ -16,7 +20,7 @@ public class ConsoleCommand extends Command {
 
 
     public ConsoleCommand(String name, String explanation) {
-        super(name);
+        super("earobot" + name);
         this.name = name;
         this.explanation = explanation;
     }
@@ -24,6 +28,7 @@ public class ConsoleCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (sender != ProxyServer.getInstance().getConsole()) return;
         if (action != null) {
             action.run();
         }
