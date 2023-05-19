@@ -26,7 +26,6 @@ public class TicketButtonListener extends ListenerAdapter {
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         if (event.getButton().getId() == null) return;
-        event.deferReply().submit();
 
         if (event.getButton().getId().equals("ticketCloseButton")) {
             String guildId = event.getGuild().getId();
