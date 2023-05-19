@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.md_5.bungee.api.ProxyServer;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -42,13 +43,13 @@ public class TicketManager {
      */
     @Nullable
     public CompletableFuture<Ticket> createTicket(Member creator, TicketType ticketType, Guild guild) {
-        return CompletableFuture.supplyAsync(() -> {
-            if (hasOpenTicket(creator)) return null;
-            Ticket ticket = new Ticket(ticketType, jda, this);
-            tickets.add(ticket);
-            ticket.open(creator, guild);
-            return ticket;
-        });
+        CompletableFuture<Ticket> future = new CompletableFuture<>();
+
+        if (hasOpenTicket(creator)) return null;
+        Ticket ticket = new Ticket(ticketType, jda, this);
+        tickets.add(ticket);
+        ticket.open(creator, guild).whenComplete((unused, throwable) -> future.complete(ticket));
+        return future;
     }
 
 

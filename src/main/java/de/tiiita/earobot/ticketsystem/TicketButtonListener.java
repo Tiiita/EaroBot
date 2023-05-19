@@ -44,17 +44,13 @@ public class TicketButtonListener extends ListenerAdapter {
         for (TicketType ticketType : TicketType.values()) {
             if (event.getButton().getId().equals(ticketType.getButtonId())) {
                 ticketManager.createTicket(event.getMember(), ticketType, event.getGuild()).whenComplete((ticket, throwable) -> {
-                    ProxyServer.getInstance().getLogger().log(Level.SEVERE, "COMPLETED");
                     if (ticket == null) {
                         event.reply("You already have an open ticket!").setEphemeral(true).submit();
                         return;
                     }
-
                     if (ticket.getTicketChannel() == null) {
-                        ProxyServer.getInstance().getLogger().log(Level.SEVERE, "NULL");
                         return;
                     }
-                    ProxyServer.getInstance().getLogger().log(Level.SEVERE, "REPLY");
                     event.reply("You opened your ticket! Your ticket channel: " + ticket.getTicketChannel().getAsMention()).setEphemeral(true).submit();
                 });
             }
