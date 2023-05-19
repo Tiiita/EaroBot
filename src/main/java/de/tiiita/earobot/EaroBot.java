@@ -121,14 +121,13 @@ public final class EaroBot extends Plugin {
                 .submit();
 
     }
+
     private void registerCommands() {
         List<Guild> guilds = jda.getGuilds();
         guilds.forEach(currentGuild -> {
             String guildId = currentGuild.getId();
             registerCommandsForGuild(guildId);
         });
-
-        jda.updateCommands().submit();
     }
 
     private void registerListener() {
@@ -147,6 +146,7 @@ public final class EaroBot extends Plugin {
         jda.addEventListener(command);
         return createdCommand;
     }
+
 
     private void connectToDiscord(String token, String activity) {
         try {
