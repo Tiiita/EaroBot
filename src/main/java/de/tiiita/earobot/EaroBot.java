@@ -53,11 +53,12 @@ public final class EaroBot extends Plugin {
         getLogger().log(Level.INFO, "The Discord bot is starting...");
         loadConfig("config.yml");
         this.config = new Config("config.yml", getDataFolder(), this);
+        this.database = new SQLite(this);
+        this.dataManager = new DataManager(database);
         setupBot(config.getString("token"), config.getString("bot-activity"));
 
 
-        this.database = new SQLite(this);
-        this.dataManager = new DataManager(database);
+
         this.ticketManager = new TicketManager(jda, dataManager);
         this.playerLogManager = new PlayerLogManager(config, jda);
         this.consoleCommandManager = new ConsoleCommandManager(this);
