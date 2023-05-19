@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.EnumSet;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created on März 17, 2023 | 13:54:52
@@ -37,57 +38,86 @@ public class Ticket {
     }
 
 
-    public void open(Member creator, Guild guild) {
-        try {
-            ticketManager.getTicketRole(guild.getId()).whenComplete((role, throwable) -> {
-                if (role == null) {
-                    return;
-                }
+    public CompletableFuture<Void> open(Member creator, Guild guild) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
 
-                this.creator = creator;
-                this.ticketChannel = guild.createTextChannel(ticketType.getTicketName() + "-" + creator.getUser().getAsTag())
-                        .addPermissionOverride(creator, EnumSet.of(Permission.VIEW_CHANNEL), null)
-                        .addPermissionOverride(role, EnumSet.of(Permission.VIEW_CHANNEL), null)
-                        .addPermissionOverride(guild.getPublicRole(), null, EnumSet.of(Permission.VIEW_CHANNEL))
-                        .complete();
-                this.ticketChannelId = ticketChannel.getId();
+        ticketManager.getTicketRole(guild.getId()).thenAcceptAsync((role) -> {
+            if (role == null) {
+                future.complete(null);
+                return;
+            }
 
-                EmbedBuilder embed = new EmbedBuilder();
-                embed.setFooter(TimeUtil.getTime(null), jda.getSelfUser().getAvatarUrl());
-                embed.setColor(Color.WHITE);
+            this.creator = creator;
+            guild.createTextChannel(ticketType.getTicketName() + "-" + creator.getUser().getAsTag())
+                    .addPermissionOverride(creator, EnumSet.of(Permission.VIEW_CHANNEL), null)
+                    .addPermissionOverride(role, EnumSet.of(Permission.VIEW_CHANNEL), null)
+                    .addPermissionOverride(guild.getPublicRole(), null, EnumSet.of(Permission.VIEW_CHANNEL))
+                    .submit()
+                    .thenAcceptAsync((channel) -> {
+                        this.ticketChannel = channel;
+                        this.ticketChannelId = channel.getId();
 
-                embed.setTitle(ticketType.getSelectionDisplay());
-                embed.setDescription(ticketType.getTicketContent());
-                embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
-                ticketChannel.sendMessage(role.getAsMention()).submit();
-                ticketChannel.sendMessageEmbeds(embed.build())
-                        .addActionRow(Button.danger("ticketCloseButton", "Close"))
-                        .submit();
+                        EmbedBuilder embed = new EmbedBuilder();
+                        embed.setFooter(TimeUtil.getTime(null), jda.getSelfUser().getAvatarUrl());
+                        embed.setColor(Color.WHITE);
 
+                        embed.setTitle(ticketType.getSelectionDisplay());
+                        embed.setDescription(ticketType.getTicketContent());
+                        embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
+                        channel.sendMessage(role.getAsMention()).submit();
+                        channel.sendMessageEmbeds(embed.build())
+                                .addActionRow(Button.danger("ticketCloseButton", "Close"))
+                                .submit()
+                                .thenAcceptAsync((message) -> future.complete(null))
+                                .exceptionally((ex) -> {
+                                    future.completeExceptionally(ex);
+                                    return null;
+                                });
+                    })
+                    .exceptionally((ex) -> {
+                        future.completeExceptionally(ex);
+                        return null;
+                    });
+        });
 
-            });
-        } catch (NullPointerException ignore) {}
+        return future;
     }
 
-    public void close() {
+    public CompletableFuture<Void> close() {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
         if (this.ticketChannelId == null) {
-            return;
+            future.complete(null);
+            return future;
         }
 
         TextChannel ticketChannel = jda.getTextChannelById(ticketChannelId);
-        if (ticketChannel == null) return;
-        ticketChannel.delete().submit();
-        creator.getUser().openPrivateChannel().submit().whenComplete((privateChannel, throwable) -> {
-            EmbedBuilder embed = new EmbedBuilder();
-            embed.setFooter(TimeUtil.getTime(null), jda.getSelfUser().getAvatarUrl());
-            embed.setColor(Color.WHITE);
-            embed.setTitle("Your Ticket");
-            embed.setDescription("Your ticket has been closed!\n" +
-                    "You can now create new tickets.");
-            embed.addField("Ticket Type", "Your Ticket Type: " + ticketType.getSelectionDisplay(), false);
-            embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
-            privateChannel.sendMessageEmbeds(embed.build()).submit();
+        if (ticketChannel == null) {
+            future.complete(null);
+            return future;
+        }
+
+        ticketChannel.delete().submit().thenAcceptAsync((unused) -> {
+            creator.getUser().openPrivateChannel().submit().whenCompleteAsync((privateChannel, throwable) -> {
+                EmbedBuilder embed = new EmbedBuilder();
+                embed.setFooter(TimeUtil.getTime(null), jda.getSelfUser().getAvatarUrl());
+                embed.setColor(Color.WHITE);
+                embed.setTitle("Your Ticket");
+                embed.setDescription("Your ticket has been closed!\n" +
+                        "You can now create new tickets.");
+                embed.addField("Ticket Type", "Your Ticket Type: " + ticketType.getSelectionDisplay(), false);
+                embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
+                privateChannel.sendMessageEmbeds(embed.build())
+                        .submit()
+                        .thenAcceptAsync((message) -> future.complete(null))
+                        .exceptionally((ex) -> {
+                            future.completeExceptionally(ex);
+                            return null;
+                        });
+            });
         });
+
+        return future;
     }
 
     public TicketType getTicketType() {

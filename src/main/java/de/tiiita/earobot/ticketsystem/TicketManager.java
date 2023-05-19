@@ -41,13 +41,14 @@ public class TicketManager {
      * @return the ticket if it works and the ticket was created, null if the creator has a ticket open already.
      */
     @Nullable
-    public Ticket createTicket(Member creator, TicketType ticketType, Guild guild) {
-        if (!hasOpenTicket(creator)) {
+    public CompletableFuture<Ticket> createTicket(Member creator, TicketType ticketType, Guild guild) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (hasOpenTicket(creator)) return null;
             Ticket ticket = new Ticket(ticketType, jda, this);
             tickets.add(ticket);
             ticket.open(creator, guild);
             return ticket;
-        } else return null;
+        });
     }
 
 
@@ -115,13 +116,13 @@ public class TicketManager {
      *
      * @param ticket ticket that you want to close.
      */
-    public void closeTicket(Ticket ticket) {
-        ticket.close();
+    public CompletableFuture<Void> closeTicket(Ticket ticket) {
         tickets.remove(ticket);
+        return ticket.close();
     }
 
     /**
-     * Close all open tickets with this!
+     * Close all open tickets with this! This is sync and WILL block the thread where its called!
      *
      * @return number of closed tickets.
      */
