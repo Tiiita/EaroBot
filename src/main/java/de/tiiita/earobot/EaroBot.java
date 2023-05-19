@@ -57,8 +57,6 @@ public final class EaroBot extends Plugin {
         this.dataManager = new DataManager(database);
         setupBot(config.getString("token"), config.getString("bot-activity"));
 
-
-
         this.ticketManager = new TicketManager(jda, dataManager);
         this.playerLogManager = new PlayerLogManager(config, jda);
         this.consoleCommandManager = new ConsoleCommandManager(this);
