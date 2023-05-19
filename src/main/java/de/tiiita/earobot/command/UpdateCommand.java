@@ -14,10 +14,12 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.md_5.bungee.api.ProxyServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.Objects;
+import java.util.logging.Level;
 
 /**
  * Created on März 16, 2023 | 21:16:02
@@ -28,36 +30,40 @@ public class UpdateCommand extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (!event.getName().equals("update")) return;
-        if (event.getMember() == null) return;
+
+        if (event.getMember() == null) {
+            return;
+        }
+
         if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             event.reply("You do not have permissions for that!").setEphemeral(true).submit();
             return;
         }
 
-        //Modal
-        TextInput englishInput = TextInput.create("english-input", "English", TextInputStyle.PARAGRAPH)
-                .setMinLength(1)
-                .setMaxLength(4000)
-                .setRequired(true)
-                .setPlaceholder("Write here the information in english :)")
-                .build();
-        TextInput germanInput = TextInput.create("german-input", "Deutsch", TextInputStyle.PARAGRAPH)
-                .setMinLength(1)
-                .setMaxLength(4000)
-                .setRequired(true)
-                .setPlaceholder("Write here the information in german :)")
-                .build();
-        TextInput portugueseInput = TextInput.create("portuguese-input", "Portuguese", TextInputStyle.PARAGRAPH)
-                .setMinLength(1)
-                .setRequired(false)
-                .setMaxLength(4000)
-                .setPlaceholder("Write here the information in portuguese (Write nothing if you do not want a message in this language!)")
-                .build();
+            //Modal
+            TextInput englishInput = TextInput.create("english-input", "English", TextInputStyle.PARAGRAPH)
+                    .setMinLength(1)
+                    .setMaxLength(4000)
+                    .setRequired(true)
+                    .setPlaceholder("Write here the information in english :)")
+                    .build();
+            TextInput germanInput = TextInput.create("german-input", "Deutsch", TextInputStyle.PARAGRAPH)
+                    .setMinLength(1)
+                    .setMaxLength(4000)
+                    .setRequired(true)
+                    .setPlaceholder("Write here the information in german :)")
+                    .build();
+            TextInput portugueseInput = TextInput.create("portuguese-input", "Portuguese", TextInputStyle.PARAGRAPH)
+                    .setMinLength(1)
+                    .setRequired(false)
+                    .setMaxLength(4000)
+                    .setPlaceholder("Write here the information in portuguese (Write nothing if you just want german and english!)")
+                    .build();
 
-        Modal modal = Modal.create("update-modal", "Create Update Message")
-                .addActionRows(ActionRow.of(englishInput), ActionRow.of(germanInput), ActionRow.of(portugueseInput))
-                .build();
-        event.replyModal(modal).submit();
+            Modal modal = Modal.create("update-modal", "Create Update Message")
+                    .addActionRows(ActionRow.of(englishInput), ActionRow.of(germanInput), ActionRow.of(portugueseInput))
+                    .build();
+            event.replyModal(modal).submit();
     }
 
     @Override

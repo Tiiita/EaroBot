@@ -7,7 +7,6 @@ import de.tiiita.earobot.listener.MessageReceiveListener;
 import de.tiiita.earobot.listener.UserJoinLeaveListener;
 import de.tiiita.earobot.playerlogs.PlayerConnectionListener;
 import de.tiiita.earobot.playerlogs.PlayerLogManager;
-import de.tiiita.earobot.ticketsystem.command.CloseTicketsCommand;
 import de.tiiita.earobot.ticketsystem.command.SendTicketMessageCommand;
 import de.tiiita.earobot.ticketsystem.command.SetTicketRoleCommand;
 import de.tiiita.earobot.ticketsystem.TicketButtonListener;
@@ -116,7 +115,6 @@ public final class EaroBot extends Plugin {
         registerCommand(guildId, "set-ideas-channel", "With this command you can set the channel where the player adds automatic vote reactions!", new SetIdeasCommand(dataManager));
         registerCommand(guildId, "update", "With this command an admin can announce updates!", new UpdateCommand());
 
-        registerCommand(guildId, "close-tickets", "Close every open ticket.", new CloseTicketsCommand(ticketManager));
         registerCommand(guildId, "send-ticket-message", "Send the ticket creation panel", new SendTicketMessageCommand());
         registerCommand(guildId, "set-ticket-role", "Set the support role for tickets", new SetTicketRoleCommand(dataManager))
                 .addOption(OptionType.ROLE, "role", "Select the ticket listening role!", true)
