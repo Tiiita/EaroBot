@@ -44,8 +44,7 @@ public class HelpCommand extends ListenerAdapter {
                 + "(4) With **/clear-spam** you can remove raid messages\n\n"
                 + "(5) You have to set a ticket role with **/set-ticket-role**\n"
                 + "Done with that? To complete the ticket setup, go into a channel where you\n"
-                + "want the panel and type **/send-ticket-message**. A Panel will show up. Done!\n"
-                + "_Currently more than 1 panel will show. This is a bug... Please delete the others!_", false);
+                + "want the panel and type **/send-ticket-message**. A Panel will show up. Done!", false);
 
         embedBuilder.addField("Bot Information",
                 "Author: Tiiita\n"

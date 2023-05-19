@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandCreateAction;
@@ -30,10 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
@@ -45,6 +43,8 @@ public final class EaroBot extends Plugin {
     private TicketManager ticketManager;
     private ConsoleCommandManager consoleCommandManager;
     private PlayerLogManager playerLogManager;
+
+    private final Collection<Command> commands = new HashSet<>();
 
     @Override
     public void onEnable() {
@@ -80,7 +80,16 @@ public final class EaroBot extends Plugin {
         registerGuilds().whenComplete((unused, throwable) -> {
             registerListener();
             registerCommands();
-            jda.updateCommands().submit();
+
+            //TODO: Code that better pls lol
+            jda.addEventListener(new ClearSpamCommand());
+            jda.addEventListener(new HelpCommand());
+            jda.addEventListener(new SetWelcomeCommand(dataManager));
+            jda.addEventListener(new UpdateCommand());
+            jda.addEventListener(new SetIdeasCommand(dataManager));
+            jda.addEventListener(new SendTicketMessageCommand());
+            jda.addEventListener(new SetTicketRoleCommand(dataManager));
+
         });
     }
 
@@ -105,6 +114,7 @@ public final class EaroBot extends Plugin {
         }
         return CompletableFuture.allOf(registrationFutures.toArray(new CompletableFuture[0]));
     }
+
 
     private void registerCommandsForGuild(String guildId) {
         registerCommand(guildId, "clear-spam", "Clear channels from raid / spam messages", new ClearSpamCommand())
@@ -137,16 +147,13 @@ public final class EaroBot extends Plugin {
         jda.addEventListener(new TicketButtonListener(ticketManager));
     }
 
-    //Register discord bot commands here:
     private CommandCreateAction registerCommand(@NotNull String guildId, @NotNull String name, @NotNull String description, @NotNull Object command) {
         Guild guildById = jda.getGuildById(guildId);
         if (guildById == null) throw new IllegalArgumentException("Could not find any guild with id: " + guildId);
         CommandCreateAction createdCommand = guildById.upsertCommand(name, description);
         createdCommand.submit();
-        jda.addEventListener(command);
         return createdCommand;
     }
-
 
     private void connectToDiscord(String token, String activity) {
         try {

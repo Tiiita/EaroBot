@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.logging.Level;
 
@@ -50,7 +51,12 @@ public class PlayerLogManager {
         embedBuilder.addField("Forge User", getIsForgeMsg(player), true);
         int protocolId = player.getPendingConnection().getVersion();
         embedBuilder.addField("Version", Versions.getVersionById(protocolId), true);
-        embedBuilder.addField("IP", player.getSocketAddress().toString(), true);
+
+        String rawIP = player.getSocketAddress().toString().replaceAll("/", "");
+        String[] displayIPArray = rawIP.split(":");
+        String displayIP = displayIPArray[0];
+
+        embedBuilder.addField("IP", displayIP, true);
         embedBuilder.addField("Online", "" + ProxyServer.getInstance().getOnlineCount(), true);
         embedBuilder.setFooter(TimeUtil.getTime(null));
         return embedBuilder.build();
