@@ -47,7 +47,6 @@ public class ConsoleCommandManager implements Listener {
 
     private void registerCommand(ConsoleCommand command) {
         registeredCommands.add(command);
-        ProxyServer.getInstance().getLogger().log(Level.INFO, "Registered BungeeCord Command: " + command.getName());
         ProxyServer.getInstance().getPluginManager().registerCommand(earoBot, command);
     }
 
