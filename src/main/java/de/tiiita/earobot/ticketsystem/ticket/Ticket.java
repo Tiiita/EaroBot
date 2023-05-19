@@ -40,47 +40,38 @@ public class Ticket {
 
     public CompletableFuture<Void> open(Member creator, Guild guild) {
         CompletableFuture<Void> future = new CompletableFuture<>();
+        return CompletableFuture.runAsync(() -> {
 
-        ticketManager.getTicketRole(guild.getId()).thenAcceptAsync((role) -> {
-            if (role == null) {
-                future.complete(null);
-                return;
-            }
+            ticketManager.getTicketRole(guild.getId()).thenAcceptAsync((role) -> {
+                if (role == null) {
+                    future.complete(null);
+                    return;
+                }
 
-            this.creator = creator;
-            guild.createTextChannel(ticketType.getTicketName() + "-" + creator.getUser().getAsTag())
-                    .addPermissionOverride(creator, EnumSet.of(Permission.VIEW_CHANNEL), null)
-                    .addPermissionOverride(role, EnumSet.of(Permission.VIEW_CHANNEL), null)
-                    .addPermissionOverride(guild.getPublicRole(), null, EnumSet.of(Permission.VIEW_CHANNEL))
-                    .submit()
-                    .thenAcceptAsync((channel) -> {
-                        this.ticketChannel = channel;
-                        this.ticketChannelId = channel.getId();
+                this.creator = creator;
+                guild.createTextChannel(ticketType.getTicketName() + "-" + creator.getUser().getAsTag())
+                        .addPermissionOverride(creator, EnumSet.of(Permission.VIEW_CHANNEL), null)
+                        .addPermissionOverride(role, EnumSet.of(Permission.VIEW_CHANNEL), null)
+                        .addPermissionOverride(guild.getPublicRole(), null, EnumSet.of(Permission.VIEW_CHANNEL))
+                        .submit()
+                        .thenAcceptAsync((channel) -> {
+                            this.ticketChannel = channel;
+                            this.ticketChannelId = channel.getId();
 
-                        EmbedBuilder embed = new EmbedBuilder();
-                        embed.setFooter(TimeUtil.getTime(null), jda.getSelfUser().getAvatarUrl());
-                        embed.setColor(Color.WHITE);
+                            EmbedBuilder embed = new EmbedBuilder();
+                            embed.setFooter(TimeUtil.getTime(null), jda.getSelfUser().getAvatarUrl());
+                            embed.setColor(Color.WHITE);
 
-                        embed.setTitle(ticketType.getSelectionDisplay());
-                        embed.setDescription(ticketType.getTicketContent());
-                        embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
-                        channel.sendMessage(role.getAsMention()).submit();
-                        channel.sendMessageEmbeds(embed.build())
-                                .addActionRow(Button.danger("ticketCloseButton", "Close"))
-                                .submit()
-                                .thenAcceptAsync((message) -> future.complete(null))
-                                .exceptionally((ex) -> {
-                                    future.completeExceptionally(ex);
-                                    return null;
-                                });
-                    })
-                    .exceptionally((ex) -> {
-                        future.completeExceptionally(ex);
-                        return null;
-                    });
+                            embed.setTitle(ticketType.getSelectionDisplay());
+                            embed.setDescription(ticketType.getTicketContent());
+                            embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
+                            channel.sendMessage(role.getAsMention()).submit();
+                            channel.sendMessageEmbeds(embed.build())
+                                    .addActionRow(Button.danger("ticketCloseButton", "Close"))
+                                    .submit();
+                        });
+            });
         });
-
-        return future;
     }
 
     public CompletableFuture<Void> close() {

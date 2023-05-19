@@ -1,6 +1,7 @@
 package de.tiiita.earobot;
 
 import de.tiiita.earobot.command.*;
+import de.tiiita.earobot.command.console.ConsoleCommandManager;
 import de.tiiita.earobot.listener.GuildJoinListener;
 import de.tiiita.earobot.listener.MessageReceiveListener;
 import de.tiiita.earobot.listener.UserJoinLeaveListener;
@@ -43,6 +44,7 @@ public final class EaroBot extends Plugin {
     private DataManager dataManager;
     private SQLite database;
     private TicketManager ticketManager;
+    private ConsoleCommandManager consoleCommandManager;
     private PlayerLogManager playerLogManager;
 
     @Override
@@ -51,17 +53,16 @@ public final class EaroBot extends Plugin {
         getLogger().log(Level.INFO, "The Discord bot is starting...");
         loadConfig("config.yml");
         this.config = new Config("config.yml", getDataFolder(), this);
+        setupBot(config.getString("token"), config.getString("bot-activity"));
 
 
-        //DO NOT REGISTER ANYTHING THAT NEED *JDA* BEFORE setupBot()!
         this.database = new SQLite(this);
         this.dataManager = new DataManager(database);
-        setupBot(config.getString("token"), config.getString("bot-activity"));
-        //This has to be called after bot setup
         this.ticketManager = new TicketManager(jda, dataManager);
         this.playerLogManager = new PlayerLogManager(config, jda);
+        this.consoleCommandManager = new ConsoleCommandManager(this);
         getProxy().getPluginManager().registerListener(this, new PlayerConnectionListener(playerLogManager));
-
+        getProxy().getPluginManager().registerListener(this, consoleCommandManager);
         getLogger().log(Level.INFO, "Done! Discord bot is ready!");
     }
 
@@ -70,6 +71,7 @@ public final class EaroBot extends Plugin {
     public void onDisable() {
         // Plugin shutdown logic
         ticketManager.closeAllTickets();
+        database.close();
         jda.shutdown();
         getLogger().log(Level.INFO, "Shutting down...");
     }
