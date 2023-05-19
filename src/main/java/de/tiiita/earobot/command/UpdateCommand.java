@@ -77,7 +77,7 @@ public class UpdateCommand extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("New Update");
         embed.setColor(Color.WHITE);
-        embed.setDescription(event.getGuild().getPublicRole().getAsMention() + "\nOur network published a new update!");
+        embed.setDescription("Our network published a new update!");
 
         embed.addField("» \uD83C\uDDEC\uD83C\uDDE7 English", englishInput, false);
         embed.addField("» \uD83C\uDDE9\uD83C\uDDEA Deutsch", germanInput, false);
@@ -87,6 +87,7 @@ public class UpdateCommand extends ListenerAdapter {
         embed.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
         embed.setFooter("earomc.net", event.getJDA().getSelfUser().getAvatarUrl());
 
+        event.getChannel().sendMessage(Objects.requireNonNull(event.getGuild()).getPublicRole().getAsMention()).submit();
         event.getChannel().sendMessageEmbeds(embed.build()).submit();
         event.reply("You successfully published a new update!").setEphemeral(true).submit();
     }
