@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.EnumSet;
-import java.util.logging.Level;
 
 /**
  * Created on März 17, 2023 | 13:54:52
@@ -46,7 +45,7 @@ public class Ticket {
                 }
 
                 this.creator = creator;
-                this.ticketChannel = guild.createTextChannel(ticketType.getTicketDisplay() + "-" + creator.getUser().getAsTag())
+                this.ticketChannel = guild.createTextChannel(ticketType.getTicketName() + "-" + creator.getUser().getAsTag())
                         .addPermissionOverride(creator, EnumSet.of(Permission.VIEW_CHANNEL), null)
                         .addPermissionOverride(role, EnumSet.of(Permission.VIEW_CHANNEL), null)
                         .addPermissionOverride(guild.getPublicRole(), null, EnumSet.of(Permission.VIEW_CHANNEL))
@@ -56,60 +55,9 @@ public class Ticket {
                 EmbedBuilder embed = new EmbedBuilder();
                 embed.setFooter(TimeUtil.getTime(null), jda.getSelfUser().getAvatarUrl());
                 embed.setColor(Color.WHITE);
-                if (ticketType == TicketType.SUPPORT) {
-                    embed.setTitle("Support");
-                } else embed.setTitle("Rank Application");
 
-
-                switch (ticketType) {
-                    case MEDIA_APPLY: {
-                        embed.setDescription("This is your **media application** ticket!\n"
-                                + "Only you and our staff can see and write in it.\n\n"
-                                + "Please write your application here. You should give us following information:\n"
-                                + "- Your content link (twitch.tv... or youtube)\n"
-                                + "- Your Minecraft name and UUID. (https://namemc.com/)\n"
-                                + "- Do you have content of our network?\n"
-                                + "- Why should we accept _you_?\n"
-                                + "\nPlease be patient. This ticket will be closed\nwithout further reply if your application is rejected!");
-                        break;
-                    }
-
-                    case MODERATOR_APPLY: {
-                        embed.setDescription("This is your **moderator application** ticket!\n"
-                                + "Only you and our staff can see and write in it.\n\n"
-                                + "Please write your application here. You should give us following information:\n"
-                                + "- Name and age (Do not lie!)\n"
-                                + "- Your Minecraft name and UUID. (https://namemc.com/)\n"
-                                + "- Do you know how to detect cheats?\n"
-                                + "- Have you been moderator on another server?\n"
-                                + "- How did you get to know our server?\n"
-                                + "- Why do you want to be moderator on our network?\n"
-                                + "- Why should we accept _you_?\n"
-                                + "- How many hours can you be online in a week?\n"
-                                + "\nPlease be patient. This ticket will be closed\nwithout further reply if your application is rejected!");
-                        break;
-                    }
-
-                    case UNBAN_APPLY: {
-                        embed.setDescription("This is your **unban appeal** ticket!\n"
-                                + "Only you and our staff can see and write in it.\n\n"
-                                + "Please write your application here. You should give us following information:\n"
-                                + "- Were you rightly or wrongly banned?\n"
-                                + "- The time of your ban\n"
-                                + "- Your account name\n"
-                                + "- Why should we unban you?\n"
-                                + "\nPlease be patient. This ticket will be closed\nwithout further reply if your appeal is rejected!");
-
-                        break;
-                    }
-                    case SUPPORT: {
-                        embed.setDescription("This is your **support** ticket!\n"
-                                + "Please tell us your problem. Try to add as many details as possible!");
-                        break;
-                    }
-                }
-
-
+                embed.setTitle(ticketType.getSelectionDisplay());
+                embed.setDescription(ticketType.getTicketContent());
                 embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
                 ticketChannel.sendMessage(role.getAsMention()).submit();
                 ticketChannel.sendMessageEmbeds(embed.build())

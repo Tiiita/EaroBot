@@ -25,12 +25,6 @@ import java.util.Objects;
  */
 public class UpdateCommand extends ListenerAdapter {
 
-    private final EaroBot plugin;
-
-    public UpdateCommand(EaroBot plugin) {
-        this.plugin = plugin;
-    }
-
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (!event.getName().equals("update")) return;
@@ -47,14 +41,13 @@ public class UpdateCommand extends ListenerAdapter {
                 .setRequired(true)
                 .setPlaceholder("Write here the information in english :)")
                 .build();
-
         TextInput germanInput = TextInput.create("german-input", "Deutsch", TextInputStyle.PARAGRAPH)
                 .setMinLength(1)
                 .setMaxLength(4000)
                 .setRequired(true)
                 .setPlaceholder("Write here the information in german :)")
                 .build();
-        TextInput portugueseInput = TextInput.create("portuguese-input", "Português", TextInputStyle.PARAGRAPH)
+        TextInput portugueseInput = TextInput.create("portuguese-input", "Portuguese", TextInputStyle.PARAGRAPH)
                 .setMinLength(1)
                 .setRequired(false)
                 .setMaxLength(4000)
@@ -67,24 +60,23 @@ public class UpdateCommand extends ListenerAdapter {
         event.replyModal(modal).submit();
     }
 
-
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
-        if (!event.getModalId().equals("information-modal")) return;
+        if (!event.getModalId().equals("update-modal")) return;
 
         String englishInput = event.getValue("english-input").getAsString();
         String germanInput = event.getValue("german-input").getAsString();
         String portugueseInput = event.getValue("portuguese-input").getAsString();
 
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle("Information");
+        embed.setTitle("New Update");
         embed.setColor(Color.WHITE);
-        embed.setDescription(event.getGuild().getPublicRole().getAsMention() + "\nOur network published a new upate!");
+        embed.setDescription(event.getGuild().getPublicRole().getAsMention() + "\nOur network published a new update!");
 
         embed.addField("» \uD83C\uDDEC\uD83C\uDDE7 English", englishInput, false);
         embed.addField("» \uD83C\uDDE9\uD83C\uDDEA Deutsch", germanInput, false);
         if (!portugueseInput.equalsIgnoreCase("")) {
-            embed.addField("» \uD83C\uDDE7\uD83C\uDDF7 Português", germanInput, false);
+            embed.addField("» \uD83C\uDDE7\uD83C\uDDF7 Portuguese", germanInput, false);
         }
         embed.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
         embed.setFooter("earomc.net", event.getJDA().getSelfUser().getAvatarUrl());

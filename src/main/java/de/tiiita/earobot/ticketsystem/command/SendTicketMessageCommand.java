@@ -35,8 +35,8 @@ public class SendTicketMessageCommand extends ListenerAdapter {
         ticketEmbed.setColor(Color.WHITE);
 
 
-        ticketEmbed.setDescription("Below you can see several buttons for different Tickets."
-                + "\n Click on the button that is for your ticket type!");
+        ticketEmbed.setDescription("Below you can see several buttons for different tickets."
+                + "\n Click on the button for which you want to create a ticket.");
 
 
         Collection<Button> buttons = new HashSet<>();
