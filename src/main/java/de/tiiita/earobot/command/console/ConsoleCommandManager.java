@@ -7,6 +7,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +25,7 @@ import java.util.HashSet;
 public class ConsoleCommandManager implements Listener {
 
     private final EaroBot earoBot;
-    private final Collection<Command> registeredCommands = new HashSet<>();
+    private final Collection<ConsoleCommand> registeredCommands = new HashSet<>();
 
 
     public ConsoleCommandManager(EaroBot earoBot) {
@@ -39,8 +40,9 @@ public class ConsoleCommandManager implements Listener {
         registerCommand(new RebootCommand(earoBot));
     }
 
-    void registerCommand(Command command) {
+    void registerCommand(ConsoleCommand command) {
         registeredCommands.add(command);
+        ProxyServer.getInstance().getPluginManager().registerCommand(earoBot, command);
     }
 
     @EventHandler
@@ -54,7 +56,7 @@ public class ConsoleCommandManager implements Listener {
         }
         if (message.startsWith("earobot ")) {
             String commandName = message.substring(8); // Extract the command name from the message
-            Command command = getCommandByName(commandName);
+            ConsoleCommand command = getCommandByName(commandName);
             if (command != null) {
                 command.getAction().run();
             }
@@ -67,8 +69,8 @@ public class ConsoleCommandManager implements Listener {
      * @return the found command or null if nothing was found.
      */
     @Nullable
-    Command getCommandByName(String name) {
-        for (Command command : registeredCommands) {
+    ConsoleCommand getCommandByName(String name) {
+        for (ConsoleCommand command : registeredCommands) {
             if (command.getName().equalsIgnoreCase(name)) return command;
         }
         return null;
@@ -87,7 +89,7 @@ public class ConsoleCommandManager implements Listener {
      *
      * @return a COPY of the registered commands set. Changing things on this method wont change it on the real list!
      */
-    Collection<Command> getRegisteredCommands() {
+    Collection<ConsoleCommand> getRegisteredCommands() {
         return new HashSet<>(registeredCommands);
     }
 }
