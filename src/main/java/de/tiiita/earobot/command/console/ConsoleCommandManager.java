@@ -70,7 +70,7 @@ public class ConsoleCommandManager implements Listener {
         int counter = 1;
 
         for (ConsoleCommand command : getRegisteredCommands()) {
-            console.sendMessage(new TextComponent(ChatColor.GRAY + "" + counter + ". " + command.getName() + ChatColor.DARK_PURPLE + " | " + ChatColor.GRAY + command.getExplanation()));
+            console.sendMessage(new TextComponent("" + ChatColor.DARK_PURPLE + counter + ChatColor.GRAY + ". " + command.getName() + ChatColor.DARK_PURPLE + " | " + ChatColor.GRAY + command.getExplanation()));
             counter++;
         }
     }
