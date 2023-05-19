@@ -2,7 +2,9 @@ package de.tiiita.earobot.command.console;
 
 import de.tiiita.earobot.EaroBot;
 import de.tiiita.earobot.command.console.commands.EaroBotCommand;
+import de.tiiita.earobot.command.console.commands.ListCommand;
 import de.tiiita.earobot.command.console.commands.RebootCommand;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -16,6 +18,7 @@ import javax.smartcardio.ATR;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.logging.Level;
 
 /**
  * Created on Mai 19, 2023 | 18:23:01
@@ -39,10 +42,12 @@ public class ConsoleCommandManager implements Listener {
         //Register every command like that
         registerCommand(new RebootCommand(earoBot));
         registerCommand(new EaroBotCommand(this));
+        registerCommand(new ListCommand(earoBot.getJda()));
     }
 
     private void registerCommand(ConsoleCommand command) {
         registeredCommands.add(command);
+        ProxyServer.getInstance().getLogger().log(Level.INFO, "Registered BungeeCord Command: " + command.getName());
         ProxyServer.getInstance().getPluginManager().registerCommand(earoBot, command);
     }
 
@@ -60,17 +65,21 @@ public class ConsoleCommandManager implements Listener {
     }
     public void sendRegisteredCommands() {
         CommandSender console = ProxyServer.getInstance().getConsole();
-        console.sendMessage(new TextComponent("Registered Commands:"));
+        console.sendMessage(new TextComponent(ChatColor.GRAY + "Registered Commands:"));
         console.sendMessage(new TextComponent(" "));
-        getRegisteredCommands().forEach(command -> {
-            console.sendMessage(new TextComponent("- earobot " + command.getName() + " | " + command.getExplanation()));
-        });
+
+        int counter = 1;
+
+        for (ConsoleCommand command : getRegisteredCommands()) {
+            console.sendMessage(new TextComponent(ChatColor.GRAY + "" + counter + ". " + command.getName() + ChatColor.DARK_PURPLE + " | " + ChatColor.GRAY + command.getExplanation()));
+            counter++;
+        }
     }
 
     /**
      * Get every registered command as command object
      *
-     * @return a COPY of the registered commands set. Changing things on this method wont change it on the real list!
+     * @return a COPY of the registered commands set. Changing things on this method won't change it on the real list!
      */
     Collection<ConsoleCommand> getRegisteredCommands() {
         return new HashSet<>(registeredCommands);

@@ -13,7 +13,7 @@ public class RebootCommand extends ConsoleCommand {
     private final EaroBot earoBot;
 
     public RebootCommand(EaroBot earoBot) {
-        super(" reboot", "Reboot the bot without restarting the server");
+        super("earobot-reboot", "Reboot the bot without restarting the server");
         this.earoBot = earoBot;
         setActionOnRun(this::action);
     }

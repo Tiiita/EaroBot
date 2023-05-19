@@ -11,7 +11,7 @@ public class EaroBotCommand extends ConsoleCommand {
     private final ConsoleCommandManager consoleCommandManager;
 
     public EaroBotCommand(ConsoleCommandManager consoleCommandManager) {
-        super("", "List every command.");
+        super("earobot", "List every command.");
         this.consoleCommandManager = consoleCommandManager;
         setActionOnRun(this::action);
     }

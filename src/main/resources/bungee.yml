@@ -2,4 +2,4 @@ name: EaroBot
 version: '${project.version}'
 main: de.tiiita.earobot.EaroBot
 description: This is the EaroMC Discord bot!
-author: tiiita
+author: Tiiita

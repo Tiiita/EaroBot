@@ -1,5 +1,6 @@
 package de.tiiita.earobot.command.console;
 
+import de.tiiita.earobot.command.console.commands.EaroBotCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -20,7 +21,7 @@ public abstract class ConsoleCommand extends Command {
 
 
     public ConsoleCommand(String name, String explanation) {
-        super("earobot" + name);
+        super(name);
         this.name = name;
         this.explanation = explanation;
     }
