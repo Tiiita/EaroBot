@@ -82,7 +82,7 @@ public class UpdateCommand extends ListenerAdapter {
         embed.addField("» \uD83C\uDDEC\uD83C\uDDE7 English", englishInput, false);
         embed.addField("» \uD83C\uDDE9\uD83C\uDDEA Deutsch", germanInput, false);
         if (!portugueseInput.equalsIgnoreCase("")) {
-            embed.addField("» \uD83C\uDDE7\uD83C\uDDF7 Português", germanInput, false);
+            embed.addField("» \uD83C\uDDE7\uD83C\uDDF7 Português", portugueseInput, false);
         }
         embed.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
         embed.setFooter("earomc.net", event.getJDA().getSelfUser().getAvatarUrl());
