@@ -72,6 +72,7 @@ public final class EaroBot extends Plugin {
         ticketManager.closeAllTickets();
         database.close();
         jda.shutdown();
+        this.jda = null;
         getLogger().log(Level.INFO, "Shutting down...");
     }
 

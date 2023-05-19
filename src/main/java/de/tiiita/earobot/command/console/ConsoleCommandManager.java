@@ -3,7 +3,6 @@ package de.tiiita.earobot.command.console;
 import de.tiiita.earobot.EaroBot;
 import de.tiiita.earobot.command.console.commands.EaroBotCommand;
 import de.tiiita.earobot.command.console.commands.ListCommand;
-import de.tiiita.earobot.command.console.commands.RebootCommand;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -40,7 +39,6 @@ public class ConsoleCommandManager implements Listener {
 
     private void registerCommands() {
         //Register every command like that
-        registerCommand(new RebootCommand(earoBot));
         registerCommand(new EaroBotCommand(this));
         registerCommand(new ListCommand(earoBot.getJda()));
     }
