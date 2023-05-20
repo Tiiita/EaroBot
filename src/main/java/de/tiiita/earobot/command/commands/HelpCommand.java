@@ -1,4 +1,4 @@
-package de.tiiita.earobot.command;
+package de.tiiita.earobot.command.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;

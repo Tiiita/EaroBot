@@ -1,6 +1,7 @@
 package de.tiiita.earobot.listener;
 
 import de.tiiita.earobot.EaroBot;
+import de.tiiita.earobot.command.CommandManager;
 import de.tiiita.earobot.util.database.DataManager;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -14,15 +15,15 @@ import javax.annotation.Nonnull;
 public class GuildJoinListener extends ListenerAdapter {
 
 
-    private final EaroBot earoBot;
-    private final DataManager dataManager;
+    private final CommandManager commandManager;
 
-    public GuildJoinListener(EaroBot earoBot) {
-        this.earoBot = earoBot;
-        this.dataManager = earoBot.getDataManager();
+
+    public GuildJoinListener(CommandManager commandManager) {
+        this.commandManager = commandManager;
     }
 
+    @Override
     public void onGuildJoin(@Nonnull GuildJoinEvent event) {
-        earoBot.registerNewGuild(event.getGuild().getId());
+        commandManager.registerCommandForNewGuild(event.getGuild().getId());
     }
 }

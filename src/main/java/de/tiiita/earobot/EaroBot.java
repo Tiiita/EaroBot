@@ -1,6 +1,7 @@
 package de.tiiita.earobot;
 
-import de.tiiita.earobot.command.*;
+import de.tiiita.earobot.command.CommandManager;
+import de.tiiita.earobot.command.commands.*;
 import de.tiiita.earobot.command.console.ConsoleCommandManager;
 import de.tiiita.earobot.listener.GuildJoinListener;
 import de.tiiita.earobot.listener.MessageReceiveListener;
@@ -43,6 +44,7 @@ public final class EaroBot extends Plugin {
     private TicketManager ticketManager;
     private ConsoleCommandManager consoleCommandManager;
     private PlayerLogManager playerLogManager;
+    private CommandManager commandManager;
 
     private final Collection<Command> commands = new HashSet<>();
 
@@ -54,6 +56,9 @@ public final class EaroBot extends Plugin {
         this.config = new Config("config.yml", getDataFolder(), this);
         this.database = new SQLite(this);
         this.dataManager = new DataManager(database);
+        this.commandManager = new CommandManager(this);
+
+        //CommandManager has t
         setupBot(config.getString("token"), config.getString("bot-activity"));
 
         this.ticketManager = new TicketManager(jda, dataManager);
@@ -79,23 +84,9 @@ public final class EaroBot extends Plugin {
         connectToDiscord(token, activity);
         registerGuilds().whenComplete((unused, throwable) -> {
             registerListener();
-            registerCommands();
+            if (commandManager == null) throw new IllegalArgumentException("Cannot create commands. CommandManager cannot be null!");
+            commandManager.registerCommands();
 
-            //TODO: Code that better pls lol
-            jda.addEventListener(new ClearSpamCommand());
-            jda.addEventListener(new HelpCommand());
-            jda.addEventListener(new SetWelcomeCommand(dataManager));
-            jda.addEventListener(new UpdateCommand());
-            jda.addEventListener(new SetIdeasCommand(dataManager));
-            jda.addEventListener(new SendTicketMessageCommand());
-            jda.addEventListener(new SetTicketRoleCommand(dataManager));
-
-        });
-    }
-
-    public void registerNewGuild(String guildId) {
-        dataManager.registerGuild(guildId).whenComplete((unused, throwable) -> {
-            registerCommandsForGuild(guildId);
         });
     }
 
@@ -116,43 +107,11 @@ public final class EaroBot extends Plugin {
     }
 
 
-    private void registerCommandsForGuild(String guildId) {
-        registerCommand(guildId, "clear-spam", "Clear channels from raid / spam messages", new ClearSpamCommand())
-                .addOption(OptionType.STRING, "message", "The message that is equally to the one that should be deleted", true)
-                .submit();
-        registerCommand(guildId, "set-welcome-channel", "With this command you can set the welcome channel for the bot!", new SetWelcomeCommand(dataManager));
-        registerCommand(guildId, "help", "Get help or information!", new HelpCommand());
-        registerCommand(guildId, "set-ideas-channel", "With this command you can set the channel where the player adds automatic vote reactions!", new SetIdeasCommand(dataManager));
-        registerCommand(guildId, "update", "With this command an admin can announce updates!", new UpdateCommand());
-
-        registerCommand(guildId, "send-ticket-message", "Send the ticket creation panel", new SendTicketMessageCommand());
-        registerCommand(guildId, "set-ticket-role", "Set the support role for tickets", new SetTicketRoleCommand(dataManager))
-                .addOption(OptionType.ROLE, "role", "Select the ticket listening role!", true)
-                .submit();
-
-    }
-
-    private void registerCommands() {
-        List<Guild> guilds = jda.getGuilds();
-        guilds.forEach(currentGuild -> {
-            String guildId = currentGuild.getId();
-            registerCommandsForGuild(guildId);
-        });
-    }
-
     private void registerListener() {
-        jda.addEventListener(new GuildJoinListener(this));
+        jda.addEventListener(new GuildJoinListener(commandManager));
         jda.addEventListener(new UserJoinLeaveListener(dataManager, jda));
         jda.addEventListener(new MessageReceiveListener(dataManager));
         jda.addEventListener(new TicketButtonListener(ticketManager));
-    }
-
-    private CommandCreateAction registerCommand(@NotNull String guildId, @NotNull String name, @NotNull String description, @NotNull Object command) {
-        Guild guildById = jda.getGuildById(guildId);
-        if (guildById == null) throw new IllegalArgumentException("Could not find any guild with id: " + guildId);
-        CommandCreateAction createdCommand = guildById.upsertCommand(name, description);
-        createdCommand.submit();
-        return createdCommand;
     }
 
     private void connectToDiscord(String token, String activity) {

@@ -1,4 +1,4 @@
-package de.tiiita.earobot.command;
+package de.tiiita.earobot.command.commands;
 
 import de.tiiita.earobot.util.Columns;
 import de.tiiita.earobot.util.EmbedUtil;
