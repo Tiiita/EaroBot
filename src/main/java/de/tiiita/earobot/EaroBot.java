@@ -56,14 +56,15 @@ public final class EaroBot extends Plugin {
         this.config = new Config("config.yml", getDataFolder(), this);
         this.database = new SQLite(this);
         this.dataManager = new DataManager(database);
-        this.commandManager = new CommandManager(this);
 
-        //CommandManager has t
+
         setupBot(config.getString("token"), config.getString("bot-activity"));
 
         this.ticketManager = new TicketManager(jda, dataManager);
         this.playerLogManager = new PlayerLogManager(config, jda);
         this.consoleCommandManager = new ConsoleCommandManager(this);
+        this.commandManager = new CommandManager(this);
+        this.commandManager.registerCommands();
         getProxy().getPluginManager().registerListener(this, new PlayerConnectionListener(playerLogManager));
         getProxy().getPluginManager().registerListener(this, consoleCommandManager);
         getLogger().log(Level.INFO, "Done! Discord bot is ready!");
@@ -84,8 +85,7 @@ public final class EaroBot extends Plugin {
         connectToDiscord(token, activity);
         registerGuilds().whenComplete((unused, throwable) -> {
             registerListener();
-            if (commandManager == null) throw new IllegalArgumentException("Cannot create commands. CommandManager cannot be null!");
-            commandManager.registerCommands();
+            //Commands can only be registered later...
 
         });
     }
