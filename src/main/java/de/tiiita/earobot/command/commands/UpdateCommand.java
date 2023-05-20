@@ -53,7 +53,7 @@ public class UpdateCommand extends ListenerAdapter {
                     .setRequired(true)
                     .setPlaceholder("Write here the information in german :)")
                     .build();
-            TextInput portugueseInput = TextInput.create("portuguese-input", "Português", TextInputStyle.UNKNOWN)
+            TextInput portugueseInput = TextInput.create("portuguese-input", "Português", TextInputStyle.PARAGRAPH)
                     .setMinLength(1)
                     .setRequired(false)
                     .setMaxLength(4000)
