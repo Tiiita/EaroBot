@@ -39,6 +39,7 @@ public class CommandManager {
     private final UpdateCommand updateCommand;
     private final SetIdeasCommand setIdeasCommand;
     private final SendTicketMessageCommand sendTicketMessageCommand;
+    private final DoenerCommand doenerCommand;
     private final SetTicketRoleCommand setTicketRoleCommand;
 
     public CommandManager(EaroBot earoBot) {
@@ -48,6 +49,7 @@ public class CommandManager {
         this.clearSpamCommand = new ClearSpamCommand();
         this.setWelcomeCommand = new SetWelcomeCommand(dataManager);
         this.helpCommand = new HelpCommand();
+        this.doenerCommand = new DoenerCommand(earoBot.getConfig());
         this.updateCommand = new UpdateCommand();
         this.setIdeasCommand = new SetIdeasCommand(dataManager);
         this.sendTicketMessageCommand = new SendTicketMessageCommand();
@@ -60,6 +62,7 @@ public class CommandManager {
         jda.addEventListener(sendTicketMessageCommand);
         jda.addEventListener(setTicketRoleCommand);
         jda.addEventListener(setWelcomeCommand);
+        jda.addEventListener(doenerCommand);
     }
 
 
@@ -86,6 +89,7 @@ public class CommandManager {
                 .addOption(OptionType.STRING, "message", "The message that is equally to the one that should be deleted", true)
                 .submit();
         registerCommand(guildId, "set-welcome-channel", "With this command you can set the welcome channel for the bot!", setWelcomeCommand);
+        registerCommand(guildId, "doener", "Let the bot decide if and which doener you get today", doenerCommand);
         registerCommand(guildId, "help", "Get help or information!", helpCommand);
         registerCommand(guildId, "set-ideas-channel", "With this command you can set the channel where the player adds automatic vote reactions!", setIdeasCommand);
         registerCommand(guildId, "update", "With this command an admin can announce updates!", updateCommand);
