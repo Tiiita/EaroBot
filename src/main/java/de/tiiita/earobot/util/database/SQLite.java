@@ -54,7 +54,6 @@ public class SQLite {
     public void close() {
         try {
             if (dataSource.getConnection() != null) {
-                dataSource.getConnection().close();
                 dataSource.close();
                 plugin.getLogger().log(Level.INFO, "The SQLite database connection has been closed!");
             }

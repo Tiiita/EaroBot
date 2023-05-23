@@ -85,8 +85,6 @@ public final class EaroBot extends Plugin {
         connectToDiscord(token, activity);
         registerGuilds().whenComplete((unused, throwable) -> {
             registerListener();
-            //Commands can only be registered later...
-
         });
     }
 
