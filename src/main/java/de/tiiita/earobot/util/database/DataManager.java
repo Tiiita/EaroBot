@@ -72,6 +72,7 @@ public class DataManager {
         });
     }
 
+    
     private Connection getConnection() {
         try {
             return database.getDataSource().getConnection();

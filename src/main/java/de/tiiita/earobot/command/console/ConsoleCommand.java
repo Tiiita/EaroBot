@@ -26,7 +26,6 @@ public abstract class ConsoleCommand extends Command {
         this.explanation = explanation;
     }
 
-
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (sender != ProxyServer.getInstance().getConsole()) return;
@@ -34,7 +33,6 @@ public abstract class ConsoleCommand extends Command {
             action.run();
         }
     }
-
 
     public void setActionOnRun(Runnable action) {
         this.action = action;
