@@ -27,6 +27,7 @@ public class Ticket {
     private String ticketChannelId;
     private TextChannel ticketChannel;
     private final JDA jda;
+    private Member closer;
     private final TicketManager ticketManager;
     private final java.util.logging.Logger logger;
     private final TicketType ticketType;
@@ -93,12 +94,22 @@ public class Ticket {
         ticketChannel.delete().submit().thenAcceptAsync((unused) -> {
             creator.getUser().openPrivateChannel().submit().whenCompleteAsync((privateChannel, throwable) -> {
                 EmbedBuilder embed = new EmbedBuilder();
-                embed.setFooter(TimeUtil.getTime(null), jda.getSelfUser().getAvatarUrl());
+                embed.setFooter("EaroBot Ticket System", jda.getSelfUser().getAvatarUrl());
                 embed.setColor(Color.WHITE);
                 embed.setTitle("Your Ticket");
                 embed.setDescription("Your ticket has been closed!\n" +
                         "You can now create new tickets.");
                 embed.addField("Ticket Type", "Your Ticket Type: " + ticketType.getSelectionDisplay(), false);
+                String closerValue;
+                if (closer != null) {
+                    closerValue = closer.getUser().getName();
+                } else closerValue = "Automatic Closing System";
+                embed.addField("Ticket Closer", "Closer: " + closerValue, false);
+                embed.addField("Closing Time", "Time: " + TimeUtil.getTime("H:mm a"), false);
+
+                int messages = ticketChannel.getHistory().size();
+                embed.addField("Sent Messages", "Messages: " + messages, false);
+                embed.addField("Server", ticketChannel.getGuild().getName(), false);
                 embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
                 privateChannel.sendMessageEmbeds(embed.build())
                         .submit()
@@ -125,6 +136,15 @@ public class Ticket {
     @Nullable
     public TextChannel getTicketChannel() {
         return ticketChannel;
+    }
+
+    @Nullable
+    public Member getCloser() {
+        return closer;
+    }
+
+    public void setCloser(Member closer) {
+        this.closer = closer;
     }
 
     @Nullable
