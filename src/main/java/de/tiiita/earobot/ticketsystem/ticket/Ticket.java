@@ -85,7 +85,7 @@ public class Ticket {
             return future;
         }
 
-        int messages = ticketChannel.getHistory().size();
+        int messages = ticketChannel.getHistory().getRetrievedHistory().size();
 
         ticketChannel.delete().submit().thenAcceptAsync((unused) -> {
             creator.getUser().openPrivateChannel().submit().whenCompleteAsync((privateChannel, throwable) -> {
@@ -101,7 +101,7 @@ public class Ticket {
                     closerValue = closer.getUser().getName();
                 } else closerValue = "Automatic Ticket Closing";
                 embed.addField("Ticket Closer", "Closer: " + closerValue, false);
-                embed.addField("Closing Time", "Time: " + TimeUtil.getTime("h:mm A"), false);
+                embed.addField("Closing Time", "Time: " + TimeUtil.getTime("h:mm a"), false);
 
                 embed.addField("Sent Messages", "Messages: " + messages, false);
                 embed.addField("Server", ticketChannel.getGuild().getName(), false);
@@ -109,7 +109,6 @@ public class Ticket {
                 privateChannel.sendMessageEmbeds(embed.build())
                         .submit()
                         .thenAcceptAsync((message) -> {
-                            System.out.println("Sent message");
                             future.complete(null);
                         })
                         .exceptionally((ex) -> {

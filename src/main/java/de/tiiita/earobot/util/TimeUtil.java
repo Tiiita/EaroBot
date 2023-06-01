@@ -21,7 +21,7 @@ public class TimeUtil {
      */
     public static String getTime(String pattern) {
         try {
-            String defaultPattern = "MM/dd/yyyy - h:mm A";
+            String defaultPattern = "MM/dd/yyyy - h:mm a";
             DateFormat dateFormat;
             if (pattern == null) {
                 dateFormat = new SimpleDateFormat(defaultPattern);
