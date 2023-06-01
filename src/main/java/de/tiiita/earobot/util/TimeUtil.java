@@ -1,5 +1,7 @@
 package de.tiiita.earobot.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,15 +16,21 @@ public class TimeUtil {
     /**
      *
      * @param pattern the pattern you want the time in. Type null if you want the default one.
-     * @return a string with the time in the wanted pattern.
+     * @return a string with the time in the wanted pattern or null if the pattern was invalid.
+     * @throws IllegalArgumentException if the pattern was invalid.
      */
     public static String getTime(String pattern) {
-        String defaultPattern = "MM/dd/yyyy - hh:mm a";
-        DateFormat dateFormat;
-        if (pattern == null) {
-               dateFormat = new SimpleDateFormat(defaultPattern);
-        } else dateFormat = new SimpleDateFormat(pattern);
-        Date date = new Date(System.currentTimeMillis());
-        return dateFormat.format(date);
+        try {
+            String defaultPattern = "MM/dd/yyyy - h:mm A";
+            DateFormat dateFormat;
+            if (pattern == null) {
+                dateFormat = new SimpleDateFormat(defaultPattern);
+            } else dateFormat = new SimpleDateFormat(pattern);
+            Date date = new Date(System.currentTimeMillis());
+            return dateFormat.format(date);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
