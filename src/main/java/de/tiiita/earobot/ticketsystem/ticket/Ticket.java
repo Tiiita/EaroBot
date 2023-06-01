@@ -18,6 +18,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * Created on März 17, 2023 | 13:54:52
@@ -93,6 +94,9 @@ public class Ticket {
             creator.getUser().openPrivateChannel().submit().whenCompleteAsync((privateChannel, throwable) -> {
 
                 messagesFuture.whenComplete((messages, throwable1) -> {
+                    int sentMessages = (int) messages.stream()
+                            .filter(message -> !message.getAuthor().isBot()).count();
+
                     EmbedBuilder embed = new EmbedBuilder();
                     embed.setFooter("EaroBot Ticket System", jda.getSelfUser().getAvatarUrl());
                     embed.setColor(Color.WHITE);
@@ -107,7 +111,7 @@ public class Ticket {
                     embed.addField("Ticket Closer", "Closer: " + closerValue, false);
                     embed.addField("Closing Time", "Time: " + TimeUtil.getTime("h:mm a"), false);
 
-                    embed.addField("Sent Messages", "Messages: " + messages.size() + "(Max. 100)", false);
+                    embed.addField("Sent Messages", "Messages: " + sentMessages + " (max. 100)", false);
                     embed.addField("Server", ticketChannel.getGuild().getName(), false);
                     embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
                     privateChannel.sendMessageEmbeds(embed.build())
