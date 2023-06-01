@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.md_5.bungee.api.ProxyServer;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
@@ -85,36 +87,42 @@ public class Ticket {
             return future;
         }
 
-        int messages = ticketChannel.getHistory().getRetrievedHistory().size();
+        CompletableFuture<List<Message>> messagesFuture = ticketChannel.getHistory().retrievePast(100).submit();
 
         ticketChannel.delete().submit().thenAcceptAsync((unused) -> {
             creator.getUser().openPrivateChannel().submit().whenCompleteAsync((privateChannel, throwable) -> {
-                EmbedBuilder embed = new EmbedBuilder();
-                embed.setFooter("EaroBot Ticket System", jda.getSelfUser().getAvatarUrl());
-                embed.setColor(Color.WHITE);
-                embed.setTitle("Your Ticket");
-                embed.setDescription("Your ticket has been closed!\n" +
-                        "You can now create new tickets.");
-                embed.addField("Ticket Type", "Your Ticket Type: " + ticketType.getSelectionDisplay(), false);
-                String closerValue;
-                if (closer != null) {
-                    closerValue = closer.getUser().getName();
-                } else closerValue = "Automatic Ticket Closing";
-                embed.addField("Ticket Closer", "Closer: " + closerValue, false);
-                embed.addField("Closing Time", "Time: " + TimeUtil.getTime("h:mm a"), false);
 
-                embed.addField("Sent Messages", "Messages: " + messages, false);
-                embed.addField("Server", ticketChannel.getGuild().getName(), false);
-                embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
-                privateChannel.sendMessageEmbeds(embed.build())
-                        .submit()
-                        .thenAcceptAsync((message) -> {
-                            future.complete(null);
-                        })
-                        .exceptionally((ex) -> {
-                            future.completeExceptionally(ex);
-                            return null;
-                        });
+                messagesFuture.whenComplete((messages, throwable1) -> {
+                    EmbedBuilder embed = new EmbedBuilder();
+                    embed.setFooter("EaroBot Ticket System", jda.getSelfUser().getAvatarUrl());
+                    embed.setColor(Color.WHITE);
+                    embed.setTitle("Your Ticket");
+                    embed.setDescription("Your ticket has been closed!\n" +
+                            "You can now create new tickets.");
+                    embed.addField("Ticket Type", "Your Ticket Type: " + ticketType.getSelectionDisplay(), false);
+                    String closerValue;
+                    if (closer != null) {
+                        closerValue = closer.getUser().getName();
+                    } else closerValue = "Automatic Ticket Closing";
+                    embed.addField("Ticket Closer", "Closer: " + closerValue, false);
+                    embed.addField("Closing Time", "Time: " + TimeUtil.getTime("h:mm a"), false);
+
+                    embed.addField("Sent Messages", "Messages: " + messages.size() + "(Max. 100)", false);
+                    embed.addField("Server", ticketChannel.getGuild().getName(), false);
+                    embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
+                    privateChannel.sendMessageEmbeds(embed.build())
+                            .submit()
+                            .thenAcceptAsync((message) -> {
+                                future.complete(null);
+                            })
+                            .exceptionally((ex) -> {
+                                future.completeExceptionally(ex);
+                                return null;
+                            });
+
+
+                });
+
             });
         });
 
