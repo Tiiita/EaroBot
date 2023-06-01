@@ -33,6 +33,7 @@ public class TicketButtonListener extends ListenerAdapter {
                 if (Objects.requireNonNull(event.getMember()).getRoles().contains(role)) {
                     Ticket ticket = ticketManager.getTicketByChannelId(event.getChannel().getId());
                     if (ticket == null) return;
+                    ticket.setCloser(event.getMember());
                     ticketManager.closeTicket(ticket); //Async
 
                 } else event.reply("You do not have permissions for that!").setEphemeral(true).submit();

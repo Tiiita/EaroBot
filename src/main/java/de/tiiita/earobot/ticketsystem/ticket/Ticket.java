@@ -103,7 +103,7 @@ public class Ticket {
                 String closerValue;
                 if (closer != null) {
                     closerValue = closer.getUser().getName();
-                } else closerValue = "Automatic Closing System";
+                } else closerValue = "Automatic Ticket Closing";
                 embed.addField("Ticket Closer", "Closer: " + closerValue, false);
                 embed.addField("Closing Time", "Time: " + TimeUtil.getTime("H:mm a"), false);
 
