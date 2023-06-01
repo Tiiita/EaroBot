@@ -45,14 +45,14 @@ public class TicketButtonListener extends ListenerAdapter {
         for (TicketType ticketType : TicketType.values()) {
             if (event.getButton().getId().equals(ticketType.getButtonId())) {
                 ticketManager.createTicket(event.getMember(), ticketType, event.getGuild()).whenComplete((ticket, throwable) -> {
-                    if (ticket == null) {
-                        event.reply("You already have an open ticket!").setEphemeral(true).submit();
-                        return;
-                    }
-                    if (ticket.getTicketChannel() == null) {
-                        return;
-                    }
-                    event.reply("You opened your ticket! Your ticket channel: " + ticket.getTicketChannel().getAsMention()).setEphemeral(true).submit();
+                        if (ticket == null) {
+                            event.reply("You already have an open ticket!").setEphemeral(true).submit();
+                            return;
+                        }
+                        if (ticket.getTicketChannel() == null) {
+                            return;
+                        }
+                        event.reply("You opened your ticket! Your ticket channel: " + ticket.getTicketChannel().getAsMention()).setEphemeral(true).submit();
                 });
             }
         }

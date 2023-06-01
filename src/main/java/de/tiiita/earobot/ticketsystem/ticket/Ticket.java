@@ -80,16 +80,12 @@ public class Ticket {
     public CompletableFuture<Void> close() {
         CompletableFuture<Void> future = new CompletableFuture<>();
 
-        if (this.ticketChannelId == null) {
+        if (this.ticketChannel == null) {
             future.complete(null);
             return future;
         }
 
-        TextChannel ticketChannel = jda.getTextChannelById(ticketChannelId);
-        if (ticketChannel == null) {
-            future.complete(null);
-            return future;
-        }
+        int messages = ticketChannel.getHistory().size();
 
         ticketChannel.delete().submit().thenAcceptAsync((unused) -> {
             creator.getUser().openPrivateChannel().submit().whenCompleteAsync((privateChannel, throwable) -> {
@@ -105,9 +101,8 @@ public class Ticket {
                     closerValue = closer.getUser().getName();
                 } else closerValue = "Automatic Ticket Closing";
                 embed.addField("Ticket Closer", "Closer: " + closerValue, false);
-                embed.addField("Closing Time", "Time: " + TimeUtil.getTime("H:mm a"), false);
+                embed.addField("Closing Time", "Time: " + TimeUtil.getTime("hh:mm A"), false);
 
-                int messages = ticketChannel.getHistory().size();
                 embed.addField("Sent Messages", "Messages: " + messages, false);
                 embed.addField("Server", ticketChannel.getGuild().getName(), false);
                 embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
