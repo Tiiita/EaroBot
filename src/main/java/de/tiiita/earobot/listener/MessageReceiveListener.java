@@ -31,7 +31,7 @@ public class MessageReceiveListener extends ListenerAdapter {
         String guildId = event.getGuild().getId();
 
         if (event.getAuthor().isBot()) return;
-        dataManager.getIDData(guildId, Columns.IDEAS_CHANNEL.get()).whenComplete((optionalId, throwable) -> {
+        dataManager.getIDData(guildId, Columns.IDEAS_CHANNEL).whenComplete((optionalId, throwable) -> {
             if (optionalId.isPresent()) {
                 TextChannel ideasChannel = event.getJDA().getTextChannelById(optionalId.get());
                 if (ideasChannel == null) {

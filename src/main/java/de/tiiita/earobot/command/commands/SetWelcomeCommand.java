@@ -34,7 +34,7 @@ public class SetWelcomeCommand extends ListenerAdapter {
         String guildId = event.getGuild().getId();
         String channelId = event.getChannel().getId();
 
-        dataManager.setIDData(guildId, Columns.WELCOME_CHANNEL.get(), channelId).whenComplete((unused, throwable) -> {
+        dataManager.setIDData(guildId, Columns.WELCOME_CHANNEL, channelId).whenComplete((unused, throwable) -> {
             MessageEmbed embed = EmbedUtil.getSimpleEmbed(null, "You set the welcome channel to: " + event.getChannel().getAsMention() + "\n"
                     + "The welcome message will be send in here.");
             event.replyEmbeds(embed).setEphemeral(true).submit();
