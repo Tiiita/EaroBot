@@ -4,20 +4,18 @@ import de.tiiita.earobot.util.Columns;
 import de.tiiita.earobot.util.database.DataManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.md_5.bungee.api.ProxyServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
 
 /**
  * Created on März 16, 2023 | 20:48:46
@@ -43,6 +41,16 @@ public class UserJoinLeaveListener extends ListenerAdapter {
             embed.setTitle("New Member");
             embed.setDescription("HeyHo👋 " + user.getAsMention() + ", welcome to this Discord!");
             welcomeChannel.sendMessageEmbeds(embed.build()).queue();
+        });
+
+
+        dataManager.getIDData(guildId, Columns.AUTO_ROLE).whenComplete((autoRoleId, throwable) -> {
+            if (!autoRoleId.isPresent()) return;
+
+            Role autoRole = event.getGuild().getRoleById(autoRoleId.get());
+            if (autoRole == null) return;
+
+            event.getGuild().addRoleToMember(event.getMember(), autoRole).queue();
         });
     }
 

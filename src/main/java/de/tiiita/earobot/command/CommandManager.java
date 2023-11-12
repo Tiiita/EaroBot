@@ -37,7 +37,7 @@ public class CommandManager {
         jda.addEventListener(new DoenerCommand(config));
         jda.addEventListener(new ClearSpamCommand());
         jda.addEventListener(new ReClaimCommand(ticketManager));
-        jda.addEventListener(new SetAutoRoleCommand());
+        jda.addEventListener(new SetAutoRoleCommand(dataManager));
         jda.addEventListener(new SetupTicketCommand(dataManager));
     }
 
