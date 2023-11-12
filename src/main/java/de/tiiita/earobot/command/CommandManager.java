@@ -1,10 +1,7 @@
 package de.tiiita.earobot.command;
 
 import de.tiiita.earobot.EaroBot;
-import de.tiiita.earobot.command.commands.ClearSpamCommand;
-import de.tiiita.earobot.command.commands.DoenerCommand;
-import de.tiiita.earobot.command.commands.SetIdeasCommand;
-import de.tiiita.earobot.command.commands.SetWelcomeCommand;
+import de.tiiita.earobot.command.commands.*;
 import de.tiiita.earobot.ticketsystem.SetupTicketCommand;
 import de.tiiita.earobot.ticketsystem.TicketManager;
 import de.tiiita.earobot.ticketsystem.command.ReClaimCommand;
@@ -40,6 +37,7 @@ public class CommandManager {
         jda.addEventListener(new DoenerCommand(config));
         jda.addEventListener(new ClearSpamCommand());
         jda.addEventListener(new ReClaimCommand(ticketManager));
+        jda.addEventListener(new SetAutoRoleCommand());
         jda.addEventListener(new SetupTicketCommand(dataManager));
     }
 
@@ -70,6 +68,7 @@ public class CommandManager {
         registerCommand(guildId, "setup-ticket", "With this command you can setup the discord ticket system")
                 .addOption(OptionType.ROLE, "ticket-role", "Setup the ticket listening role.", true)
                 .queue();
+        registerCommand(guildId,"set-autorole", "Set the role every new user should get automatically.");
     }
 
     private CommandCreateAction registerCommand(@NotNull String guildId, @NotNull String name, @NotNull String description) {

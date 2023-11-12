@@ -8,7 +8,8 @@ public enum Columns {
 
     WELCOME_CHANNEL("welcome_channel"),
     IDEAS_CHANNEL("ideas_channel"),
-    TICKET_ROLE("ticket_role");
+    TICKET_ROLE("ticket_role"),
+    AUTO_ROLE("autorole");
 
     private final String databaseColumn;
 
