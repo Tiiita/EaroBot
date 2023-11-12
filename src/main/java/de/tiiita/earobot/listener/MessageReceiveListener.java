@@ -38,8 +38,8 @@ public class MessageReceiveListener extends ListenerAdapter {
                     return;
                 }
                 if (event.getChannel().equals(ideasChannel)) {
-                    event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDC4D")).submit();
-                    event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDC4E")).submit();
+                    event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDC4D")).queue();
+                    event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDC4E")).queue();
                 }
             }
         });

@@ -42,7 +42,7 @@ public class UserJoinLeaveListener extends ListenerAdapter {
             embed.setThumbnail(user.getAvatarUrl());
             embed.setTitle("New Member");
             embed.setDescription("HeyHo👋 " + user.getAsMention() + ", welcome to this Discord!");
-            welcomeChannel.sendMessageEmbeds(embed.build()).submit();
+            welcomeChannel.sendMessageEmbeds(embed.build()).queue();
         });
     }
 
@@ -58,7 +58,7 @@ public class UserJoinLeaveListener extends ListenerAdapter {
             embed.setThumbnail(user.getAvatarUrl());
             embed.setTitle("Left");
             embed.setDescription("**" + user.getAsTag() + "** left the server!");
-            welcomeChannel.sendMessageEmbeds(embed.build()).submit();
+            welcomeChannel.sendMessageEmbeds(embed.build()).queue();
         });
     }
 

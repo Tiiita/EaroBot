@@ -28,7 +28,7 @@ public class SetIdeasCommand extends ListenerAdapter {
         if (!event.getName().equals("set-ideas-channel")) return;
         if (event.getMember() == null) return;
         if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            event.reply("You do not have permissions for that!").setEphemeral(true).submit();
+            event.replyEmbeds(EmbedUtil.getNoPermissionMessage()).setEphemeral(true).queue();
             return;
         }
         String channelId = event.getChannel().getId();
@@ -37,7 +37,7 @@ public class SetIdeasCommand extends ListenerAdapter {
         dataManager.setIDData(guildId, Columns.IDEAS_CHANNEL, channelId).whenComplete((unused, throwable) -> {
             MessageEmbed embed = EmbedUtil.getSimpleEmbed(null, "You set the ideas channel to: " + event.getChannel().getAsMention() + "\n"
                     + "Every message will get some vote reactions.");
-            event.replyEmbeds(embed).setEphemeral(true).submit();
+            event.replyEmbeds(embed).setEphemeral(true).queue();
         });
     }
 }

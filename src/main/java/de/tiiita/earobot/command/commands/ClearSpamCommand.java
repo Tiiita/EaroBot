@@ -23,19 +23,19 @@ public class ClearSpamCommand extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (!event.getName().equalsIgnoreCase("clear-spam")) return;
         if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            event.replyEmbeds(EmbedUtil.getNoPermissionMessage()).submit();
+            event.replyEmbeds(EmbedUtil.getNoPermissionMessage()).queue();
             return;
         }
 
        final String messageTypeToDelete = event.getOption("message").getAsString();
         deleteMessages(event.getChannel(), messageTypeToDelete).whenComplete((deletedMessages, throwable) -> {
             if (deletedMessages.size() == 0) {
-                event.replyEmbeds(EmbedUtil.getSimpleEmbed(EmbedUtil.getRed(), "No messages like '**" + messageTypeToDelete + "**' found...")).setEphemeral(true).submit();
+                event.replyEmbeds(EmbedUtil.getSimpleEmbed(EmbedUtil.getRed(), "No messages like '**" + messageTypeToDelete + "**' found...")).setEphemeral(true).queue();
                 return;
             }
             event.replyEmbeds(EmbedUtil.getSimpleEmbed(Color.WHITE, "Successfully removed **" + deletedMessages.size() + "** /**100** spam / raid messages!\n" +
                     "Repeat the command to check another 100 messages! \n\n_Discord allows only 100 checks in the same time..._\n\n" +
-                    "Please note that this command is in alpha phase and is a little bug buggy!")).setEphemeral(true).submit();
+                    "Please note that this command is in alpha phase and is a little bug buggy!")).setEphemeral(true).queue();
         });
     }
 
@@ -63,7 +63,7 @@ public class ClearSpamCommand extends ListenerAdapter {
             for (Message message : messages) {
                 if (message.getContentStripped().equalsIgnoreCase(sameMessage)) {
                     deletedMessages.add(message);
-                    message.delete().submit();
+                    message.delete().queue();
                 }
             }
             return deletedMessages;

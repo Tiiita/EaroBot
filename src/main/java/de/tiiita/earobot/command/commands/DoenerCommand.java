@@ -32,11 +32,11 @@ public class DoenerCommand extends ListenerAdapter {
 
         String randomAnswer = Collections.getRandom(config.getStringList("doener-answers"));
         if (randomAnswer == null) {
-            event.reply("Sorry, mir fällt so spontan nichts ein :/").submit();
+            event.reply("Sorry, mir fällt so spontan nichts ein :/").queue();
             return;
         }
 
-        event.reply(randomAnswer).submit();
+        event.reply(randomAnswer).queue();
 
     }
 

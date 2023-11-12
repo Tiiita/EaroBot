@@ -6,6 +6,7 @@ import de.tiiita.earobot.util.database.DataManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -30,10 +31,10 @@ public class SetupTicketCommand extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (!event.getName().equals("setup-ticket")) return;
         if (event.getMember() == null) return;
-        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            event.reply("You do not have permissions for that!").setEphemeral(true).queue();
+        /*if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+            event.replyEmbeds(EmbedUtil.getNoPermissionMessage()).setEphemeral(true).queue();
             return;
-        }
+        }*/
 
 
         Role ticketRole = event.getOption("ticket-role").getAsRole();
@@ -61,6 +62,7 @@ public class SetupTicketCommand extends ListenerAdapter {
         for (TicketType ticketType : TicketType.values()) {
             selectionMenu.addOption(ticketType.getDisplayName(), ticketType.getId(), ticketType.getDescription(), ticketType.getEmoji());
         }
+
 
         channel.sendMessageEmbeds(ticketEmbed.build())
                 .addActionRow(selectionMenu.build()).queue();

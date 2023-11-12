@@ -143,7 +143,7 @@ public final class EaroBot extends Plugin {
             this.jda = JDABuilder.createDefault(token)
                     .setEnabledIntents(Arrays.asList(GatewayIntent.values()))
                     .setBulkDeleteSplittingEnabled(false)
-                    .setActivity(Activity.playing("HG..."))
+                    .setActivity(Activity.playing(config.getString("bot-activity")))
                     .setStatus(OnlineStatus.ONLINE)
                     .build();
         } catch (InvalidTokenException e) {

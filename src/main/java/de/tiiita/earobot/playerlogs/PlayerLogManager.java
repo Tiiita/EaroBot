@@ -39,7 +39,7 @@ public class PlayerLogManager {
             return;
         }
 
-        channel.sendMessageEmbeds(getLogMessage(logType, player)).submit();
+        channel.sendMessageEmbeds(getLogMessage(logType, player)).queue();
     }
 
     private MessageEmbed getLogMessage(LogType logType, ProxiedPlayer player) {

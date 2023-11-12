@@ -28,7 +28,7 @@ public class SetWelcomeCommand extends ListenerAdapter {
         if (!event.getName().equals("set-welcome-channel")) return;
         if (event.getMember() == null) return;
         if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            event.reply("You do not have permissions for that!").setEphemeral(true).submit();
+            event.replyEmbeds(EmbedUtil.getNoPermissionMessage()).setEphemeral(true).queue();
             return;
         }
         String guildId = event.getGuild().getId();
@@ -37,7 +37,7 @@ public class SetWelcomeCommand extends ListenerAdapter {
         dataManager.setIDData(guildId, Columns.WELCOME_CHANNEL, channelId).whenComplete((unused, throwable) -> {
             MessageEmbed embed = EmbedUtil.getSimpleEmbed(null, "You set the welcome channel to: " + event.getChannel().getAsMention() + "\n"
                     + "The welcome message will be send in here.");
-            event.replyEmbeds(embed).setEphemeral(true).submit();
+            event.replyEmbeds(embed).setEphemeral(true).queue();
         });
     }
 }

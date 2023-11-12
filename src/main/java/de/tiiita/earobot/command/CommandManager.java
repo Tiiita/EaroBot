@@ -5,6 +5,7 @@ import de.tiiita.earobot.command.commands.ClearSpamCommand;
 import de.tiiita.earobot.command.commands.DoenerCommand;
 import de.tiiita.earobot.command.commands.SetIdeasCommand;
 import de.tiiita.earobot.command.commands.SetWelcomeCommand;
+import de.tiiita.earobot.ticketsystem.SetupTicketCommand;
 import de.tiiita.earobot.ticketsystem.TicketManager;
 import de.tiiita.earobot.ticketsystem.command.ReClaimCommand;
 import de.tiiita.earobot.util.Config;
@@ -39,6 +40,7 @@ public class CommandManager {
         jda.addEventListener(new DoenerCommand(config));
         jda.addEventListener(new ClearSpamCommand());
         jda.addEventListener(new ReClaimCommand(ticketManager));
+        jda.addEventListener(new SetupTicketCommand(dataManager));
     }
 
 
