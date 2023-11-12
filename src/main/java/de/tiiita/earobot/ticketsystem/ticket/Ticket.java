@@ -1,6 +1,7 @@
 package de.tiiita.earobot.ticketsystem.ticket;
-
 import de.tiiita.earobot.ticketsystem.TicketManager;
+import de.tiiita.earobot.ticketsystem.ticket.followup.FollowUp;
+import de.tiiita.earobot.util.EmbedUtil;
 import de.tiiita.earobot.util.TimeUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -8,17 +9,14 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.md_5.bungee.api.ProxyServer;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 /**
  * Created on März 17, 2023 | 13:54:52
@@ -29,17 +27,19 @@ public class Ticket {
     private Member creator;
     private String ticketChannelId;
     private TextChannel ticketChannel;
+    private FollowUp followUp;
     private final JDA jda;
+    private User claimer;
     private Member closer;
     private final TicketManager ticketManager;
-    private final java.util.logging.Logger logger;
+
     private final TicketType ticketType;
 
     public Ticket(TicketType ticketType, JDA jda, TicketManager ticketManager) {
         this.jda = jda;
         this.ticketType = ticketType;
+        this.followUp = ticketType.getFollowUp();
         this.ticketManager = ticketManager;
-        this.logger = ProxyServer.getInstance().getLogger();
     }
 
 
@@ -52,7 +52,7 @@ public class Ticket {
             }
 
             this.creator = creator;
-            guild.createTextChannel(ticketType.getTicketName() + "-" + creator.getUser().getAsTag())
+            guild.createTextChannel(ticketType.getTicketChannelName() + "-" + creator.getUser().getName())
                     .addPermissionOverride(creator, EnumSet.of(Permission.VIEW_CHANNEL), null)
                     .addPermissionOverride(role, EnumSet.of(Permission.VIEW_CHANNEL), null)
                     .addPermissionOverride(guild.getPublicRole(), null, EnumSet.of(Permission.VIEW_CHANNEL))
@@ -63,20 +63,24 @@ public class Ticket {
 
                         EmbedBuilder embed = new EmbedBuilder();
                         embed.setFooter(TimeUtil.getTime(null), jda.getSelfUser().getAvatarUrl());
-                        embed.setColor(Color.WHITE);
+                        embed.setColor(EmbedUtil.getDiscordBackgroundColor());
 
-                        embed.setTitle(ticketType.getSelectionDisplay());
+                        embed.setTitle(ticketType.getDisplayName());
                         embed.setDescription(ticketType.getTicketContent());
                         embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
-                        channel.sendMessage(role.getAsMention()).submit();
+                        channel.sendMessage(role.getAsMention()).queue();
                         channel.sendMessageEmbeds(embed.build())
-                                .addActionRow(Button.danger("ticketCloseButton", "Close"))
-                                .submit();
+                                .addActionRow(Button.success("ticketClaimButton", "Claim"),
+                                        Button.danger("ticketCloseButton", "Close"))
+                                .queue();
+
+
+                        if (followUp != null) {
+                            followUp.run(ticketChannel);
+                        }
                         future.complete(null);
                     });
-
         });
-
         return future;
     }
 
@@ -98,21 +102,20 @@ public class Ticket {
                             .filter(message -> !message.getAuthor().isBot()).count();
 
                     EmbedBuilder embed = new EmbedBuilder();
-                    embed.setFooter("EaroBot Ticket System", jda.getSelfUser().getAvatarUrl());
-                    embed.setColor(Color.WHITE);
+                    embed.setFooter("Ticket System", jda.getSelfUser().getAvatarUrl());
+                    embed.setColor(EmbedUtil.getDiscordBackgroundColor());
                     embed.setTitle("Your Ticket");
                     embed.setDescription("Your ticket has been closed!\n" +
                             "You can now create new tickets.");
-                    embed.addField("Ticket Type", "Your Ticket Type: " + ticketType.getSelectionDisplay(), false);
+                    embed.addField("Ticket Type", ticketType.getDisplayName(), false);
                     String closerValue;
                     if (closer != null) {
                         closerValue = closer.getUser().getName();
                     } else closerValue = "Automatic Ticket Closing";
-                    embed.addField("Ticket Closer", "Closer: " + closerValue, false);
-                    embed.addField("Closing Time", "Time: " + TimeUtil.getTime("h:mm a"), false);
+                    embed.addField("Ticket Closer", closerValue, false);
+                    embed.addField("Closing Time", TimeUtil.getTime("HH:mm"), false);
 
-                    embed.addField("Sent Messages", "Messages: " + sentMessages + " (max. 100)", false);
-                    embed.addField("Server", ticketChannel.getGuild().getName(), false);
+                    embed.addField("Sent Messages", sentMessages + " (max. 100)", false);
                     embed.setThumbnail(jda.getSelfUser().getAvatarUrl());
                     privateChannel.sendMessageEmbeds(embed.build())
                             .submit()
@@ -123,10 +126,7 @@ public class Ticket {
                                 future.completeExceptionally(ex);
                                 return null;
                             });
-
-
                 });
-
             });
         });
 
@@ -159,5 +159,18 @@ public class Ticket {
     @Nullable
     public String getTicketChannelId() {
         return ticketChannelId;
+    }
+
+    @Nullable
+    public User getClaimer() {
+        return claimer;
+    }
+
+    public void setClaimer(User claimer) {
+        this.claimer = claimer;
+    }
+
+    public FollowUp getFollowUp() {
+        return followUp;
     }
 }

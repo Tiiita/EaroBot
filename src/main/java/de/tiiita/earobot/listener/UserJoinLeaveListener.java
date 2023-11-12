@@ -65,7 +65,7 @@ public class UserJoinLeaveListener extends ListenerAdapter {
 
     @Nullable
     private CompletableFuture<TextChannel> getWelcomeChannel(String guildId) {
-        return dataManager.getIDData(guildId, Columns.WELCOME_CHANNEL.get()).handle((optionalId, throwable) -> {
+        return dataManager.getIDData(guildId, Columns.WELCOME_CHANNEL).handle((optionalId, throwable) -> {
             return optionalId.map(jda::getTextChannelById).orElse(null);
         });
     }

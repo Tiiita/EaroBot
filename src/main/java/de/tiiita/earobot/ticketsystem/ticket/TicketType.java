@@ -1,73 +1,77 @@
 package de.tiiita.earobot.ticketsystem.ticket;
 
+import de.tiiita.earobot.ticketsystem.ticket.followup.FollowUp;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+
 /**
  * Created on März 19, 2023 | 18:57:58
  * (●'◡'●)
  */
 public enum TicketType {
 
-
-    SUPPORT("support", "Support", "supportTicketButton", "This is your **support** ticket!\n"
+    SUPPORT("Support", "supportTicket", Emoji.fromUnicode("🤝"), "Click to open a support ticket", "This is your **support** ticket!\n"
             + "Please tell us your problem. Try to add as many details as possible!"),
 
-    MEDIA_APPLY("media-apply", "Media Apply", "mediaApplyButton", "This is your **media application** ticket!\n"
-            + "Only you and our staff can see and write in it.\n\n"
-            + "Please write your application here. You should give us following information:\n"
-            + "- Your content link (twitch.tv... or youtube)\n"
-            + "- Your Minecraft name and UUID. (https://namemc.com/)\n"
-            + "- Do you have content of our network?\n"
-            + "- Why should we accept _you_?\n"
-            + "\nPlease be patient. This ticket will be closed\nwithout further reply if your application is rejected!"),
+    BUG_REPORT("Bug Report", "bugReportTicket", Emoji.fromUnicode("⚙️"), "Click to report a bug", "This is your **bug report** ticket!\n\n"
+            + "Please give us following information:\n"
+            + "- How can we reproduce it?\n"
+            + "- What did you do that the bug occurred?\n"
+            + "- Any error messages or warnings you got.\n"
+            + "- [OPTIONAL] Screenshots\n\n"
+            + "Please be patient. We will answer you shortly!\n"
+            + "Thank you for reporting a bug!"),
 
-    MODERATOR_APPLY("mod-apply", "Moderator Apply", "moderatorApplyButton", "This is your **moderator application** ticket!\n"
-            + "Only you and our staff can see and write in it.\n\n"
-            + "Please write your application here. You should give us following information:\n"
-            + "- Name and age (Do not lie!)\n"
-            + "- Your Minecraft name and UUID. (https://namemc.com/)\n"
-            + "- Do you know how to detect cheats?\n"
-            + "- Have you been moderator on another server?\n"
-            + "- How did you get to know our server?\n"
-            + "- Why do you want to be moderator on our network?\n"
-            + "- Why should we accept _you_?\n"
-            + "- How many hours can you be online in a week?\n"
-            + "\nPlease be patient. This ticket will be closed\nwithout further reply if your application is rejected!"),
+    APPLICATION("Application", "applicationTicket", Emoji.fromUnicode("📪"), "Click to navigate to the sub selection", "This is your application ticket!\n" +
+            "Please select an application type...");
 
-    UNBAN_APPLY("unban-appeal", "Unban Appeal", "unbanAppealButton", "This is your **unban appeal** ticket!\n"
-            + "Only you and our staff can see and write in it.\n\n"
-            + "Please write your appeal here. You should give us following information:\n"
-            + "- Were you rightly or wrongly banned?\n"
-            + "- The time of your ban\n"
-            + "- Your account name\n"
-            + "- Why should we unban you?\n"
-            + "\nPlease be patient. This ticket will be closed\nwithout further reply if your appeal is rejected!");
 
-    private final String ticketName;
-    private final String selectionDisplay;
-    private final String buttonId;
+    private final String ticketChannelName;
+    private final String displayName;
+    private final String id;
+    private final Emoji emoji;
+    private final String description;
     private final String ticketContent;
+    private FollowUp followUp;
 
-
-    TicketType(String ticketName, String selectionDisplay, String buttonId, String ticketContent) {
-        this.ticketName = ticketName;
-        this.selectionDisplay = selectionDisplay;
-        this.buttonId = buttonId;
+    TicketType(String displayName, String id, Emoji emoji, String description, String ticketContent) {
+        this.displayName = displayName;
+        this.ticketChannelName = displayName.replaceAll(" ", "-").toLowerCase();
+        this.id = id;
+        this.emoji = emoji;
+        this.description = description;
         this.ticketContent = ticketContent;
     }
 
+    public void setFollowUp(FollowUp followUp) {
+        this.followUp = followUp;
+    }
 
     public String getTicketContent() {
         return ticketContent;
     }
 
-    public String getTicketName() {
-        return ticketName;
+    public String getTicketChannelName() {
+        return ticketChannelName;
     }
 
-    public String getSelectionDisplay() {
-        return selectionDisplay;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public String getButtonId() {
-        return buttonId;
+    public Emoji getEmoji() {
+        return emoji;
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public FollowUp getFollowUp() {
+        return followUp;
+    }
+
+    public String getId() {
+        return id;
     }
 }

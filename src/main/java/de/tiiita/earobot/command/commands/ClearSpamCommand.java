@@ -30,7 +30,7 @@ public class ClearSpamCommand extends ListenerAdapter {
        final String messageTypeToDelete = event.getOption("message").getAsString();
         deleteMessages(event.getChannel(), messageTypeToDelete).whenComplete((deletedMessages, throwable) -> {
             if (deletedMessages.size() == 0) {
-                event.replyEmbeds(EmbedUtil.getSimpleEmbed(Color.RED, "No messages like '**" + messageTypeToDelete + "**' found...")).setEphemeral(true).submit();
+                event.replyEmbeds(EmbedUtil.getSimpleEmbed(EmbedUtil.getRed(), "No messages like '**" + messageTypeToDelete + "**' found...")).setEphemeral(true).submit();
                 return;
             }
             event.replyEmbeds(EmbedUtil.getSimpleEmbed(Color.WHITE, "Successfully removed **" + deletedMessages.size() + "** /**100** spam / raid messages!\n" +

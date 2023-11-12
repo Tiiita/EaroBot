@@ -1,8 +1,6 @@
 package de.tiiita.earobot.listener;
 
-import de.tiiita.earobot.EaroBot;
 import de.tiiita.earobot.command.CommandManager;
-import de.tiiita.earobot.util.database.DataManager;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 

@@ -1,28 +1,21 @@
 package de.tiiita.earobot.command;
 
 import de.tiiita.earobot.EaroBot;
-import de.tiiita.earobot.command.commands.*;
-import de.tiiita.earobot.listener.GuildJoinListener;
-import de.tiiita.earobot.listener.MessageReceiveListener;
-import de.tiiita.earobot.listener.UserJoinLeaveListener;
-import de.tiiita.earobot.ticketsystem.TicketButtonListener;
-import de.tiiita.earobot.ticketsystem.command.SendTicketMessageCommand;
-import de.tiiita.earobot.ticketsystem.command.SetTicketRoleCommand;
+import de.tiiita.earobot.command.commands.ClearSpamCommand;
+import de.tiiita.earobot.command.commands.DoenerCommand;
+import de.tiiita.earobot.command.commands.SetIdeasCommand;
+import de.tiiita.earobot.command.commands.SetWelcomeCommand;
+import de.tiiita.earobot.ticketsystem.TicketManager;
+import de.tiiita.earobot.ticketsystem.command.ReClaimCommand;
+import de.tiiita.earobot.util.Config;
 import de.tiiita.earobot.util.database.DataManager;
-import jdk.nashorn.internal.scripts.JD;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandCreateAction;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Created on Mai 20, 2023 | 11:51:35
@@ -32,39 +25,21 @@ public class CommandManager {
 
     private final DataManager dataManager;
     private final JDA jda;
+    private final Config config;
+    private final TicketManager ticketManager;
 
-    private final ClearSpamCommand clearSpamCommand;
-    private final SetWelcomeCommand setWelcomeCommand;
-    private final HelpCommand helpCommand;
-    private final UpdateCommand updateCommand;
-    private final SetIdeasCommand setIdeasCommand;
-    private final SendTicketMessageCommand sendTicketMessageCommand;
-    private final DoenerCommand doenerCommand;
-    private final SetTicketRoleCommand setTicketRoleCommand;
+    public CommandManager(EaroBot bot) {
+        this.dataManager = bot.getDataManager();
+        this.jda = bot.getJda();
+        this.config = bot.getConfig();
+        this.ticketManager = bot.getTicketManager();
 
-    public CommandManager(EaroBot earoBot) {
-        this.dataManager = earoBot.getDataManager();
-        this.jda = earoBot.getJda();
-
-        this.clearSpamCommand = new ClearSpamCommand();
-        this.setWelcomeCommand = new SetWelcomeCommand(dataManager);
-        this.helpCommand = new HelpCommand();
-        this.doenerCommand = new DoenerCommand(earoBot.getConfig());
-        this.updateCommand = new UpdateCommand();
-        this.setIdeasCommand = new SetIdeasCommand(dataManager);
-        this.sendTicketMessageCommand = new SendTicketMessageCommand();
-        this.setTicketRoleCommand = new SetTicketRoleCommand(dataManager);
-
-        jda.addEventListener(clearSpamCommand);
-        jda.addEventListener(setIdeasCommand);
-        jda.addEventListener(helpCommand);
-        jda.addEventListener(updateCommand);
-        jda.addEventListener(sendTicketMessageCommand);
-        jda.addEventListener(setTicketRoleCommand);
-        jda.addEventListener(setWelcomeCommand);
-        jda.addEventListener(doenerCommand);
+        jda.addEventListener(new SetWelcomeCommand(dataManager));
+        jda.addEventListener(new SetIdeasCommand(dataManager));
+        jda.addEventListener(new DoenerCommand(config));
+        jda.addEventListener(new ClearSpamCommand());
+        jda.addEventListener(new ReClaimCommand(ticketManager));
     }
-
 
 
     //Call this for every guild join!
@@ -85,27 +60,21 @@ public class CommandManager {
     }
 
     private void registerCommandsForGuild(String guildId) {
-        registerCommand(guildId, "clear-spam", "Clear channels from raid / spam messages", clearSpamCommand)
-                .addOption(OptionType.STRING, "message", "The message that is equally to the one that should be deleted", true)
-                .submit();
-        registerCommand(guildId, "set-welcome-channel", "With this command you can set the welcome channel for the bot!", setWelcomeCommand);
-        registerCommand(guildId, "doener", "Let the bot decide if and which doener you get today", doenerCommand);
-        registerCommand(guildId, "help", "Get help or information!", helpCommand);
-        registerCommand(guildId, "set-ideas-channel", "With this command you can set the channel where the player adds automatic vote reactions!", setIdeasCommand);
-        registerCommand(guildId, "update", "With this command an admin can announce updates!", updateCommand);
-
-        registerCommand(guildId, "send-ticket-message", "Send the ticket creation panel", sendTicketMessageCommand);
-        registerCommand(guildId, "set-ticket-role", "Set the support role for tickets", setTicketRoleCommand)
-                .addOption(OptionType.ROLE, "role", "Select the ticket listening role!", true)
-                .submit();
-
+        registerCommand(guildId, "set-welcome-channel", "With this command you can set the welcome channel for the bot!");
+        registerCommand(guildId, "set-ideas-channel", "Set the channel where the bot should react to messages.");
+        registerCommand(guildId, "doener", "Let the bot spend you a kebab :)");
+        registerCommand(guildId, "clear-spam", "Clear the bot after a raid.");
+        registerCommand(guildId, "ticket-reclaim", "Re-Claim a ticket.");
+        registerCommand(guildId, "setup-ticket", "With this command you can setup the discord ticket system")
+                .addOption(OptionType.ROLE, "ticket-role", "Setup the ticket listening role.", true)
+                .queue();
     }
 
-    private CommandCreateAction registerCommand(@NotNull String guildId, @NotNull String name, @NotNull String description, @NotNull Object command) {
+    private CommandCreateAction registerCommand(@NotNull String guildId, @NotNull String name, @NotNull String description) {
         Guild guildById = jda.getGuildById(guildId);
         if (guildById == null) throw new IllegalArgumentException("Could not find any guild with id: " + guildId);
         CommandCreateAction createdCommand = guildById.upsertCommand(name, description);
-        createdCommand.submit();
+        createdCommand.queue();
         return createdCommand;
     }
 }

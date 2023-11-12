@@ -2,20 +2,18 @@ package de.tiiita.earobot.ticketsystem;
 
 import de.tiiita.earobot.ticketsystem.ticket.Ticket;
 import de.tiiita.earobot.ticketsystem.ticket.TicketType;
+import de.tiiita.earobot.ticketsystem.ticket.followup.FollowUpSetter;
 import de.tiiita.earobot.util.Columns;
 import de.tiiita.earobot.util.database.DataManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.md_5.bungee.api.ProxyServer;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
 
 /**
  * Created on März 17, 2023 | 13:54:08
@@ -30,6 +28,7 @@ public class TicketManager {
     public TicketManager(JDA jda, DataManager dataManager) {
         this.jda = jda;
         this.dataManager = dataManager;
+        new FollowUpSetter(jda, this);
     }
 
     //Current open tickets.
@@ -62,10 +61,9 @@ public class TicketManager {
      */
     @Nullable
     public CompletableFuture<Role> getTicketRole(String guildId) {
-        return dataManager.getIDData(guildId, Columns.TICKET_ROLE.get()).thenApply(optional -> {
+        return dataManager.getIDData(guildId, Columns.TICKET_ROLE).thenApply(optional -> {
             if (!optional.isPresent()) return null;
             String id = optional.get();
-            Role role = jda.getRoleById(id);
             return jda.getRoleById(id);
         });
     }

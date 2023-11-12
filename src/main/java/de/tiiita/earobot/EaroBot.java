@@ -1,17 +1,15 @@
 package de.tiiita.earobot;
 
 import de.tiiita.earobot.command.CommandManager;
-import de.tiiita.earobot.command.commands.*;
-import de.tiiita.earobot.command.console.ConsoleCommandManager;
 import de.tiiita.earobot.listener.GuildJoinListener;
 import de.tiiita.earobot.listener.MessageReceiveListener;
 import de.tiiita.earobot.listener.UserJoinLeaveListener;
 import de.tiiita.earobot.playerlogs.PlayerConnectionListener;
 import de.tiiita.earobot.playerlogs.PlayerLogManager;
-import de.tiiita.earobot.ticketsystem.command.SendTicketMessageCommand;
-import de.tiiita.earobot.ticketsystem.command.SetTicketRoleCommand;
-import de.tiiita.earobot.ticketsystem.TicketButtonListener;
+import de.tiiita.earobot.ticketsystem.TicketActionListener;
 import de.tiiita.earobot.ticketsystem.TicketManager;
+import de.tiiita.earobot.ticketsystem.ticket.followup.FollowUpMenuListener;
+import de.tiiita.earobot.util.Config;
 import de.tiiita.earobot.util.database.DataManager;
 import de.tiiita.earobot.util.database.SQLite;
 import net.dv8tion.jda.api.JDA;
@@ -19,34 +17,33 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
-import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.requests.restaction.CommandCreateAction;
-import de.tiiita.earobot.util.Config;
 import net.md_5.bungee.api.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
+import net.md_5.bungee.api.plugin.PluginManager;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 public final class EaroBot extends Plugin {
-    private JDA jda;
-    private Config config;
-    private DataManager dataManager;
-    private SQLite database;
-    private TicketManager ticketManager;
-    private ConsoleCommandManager consoleCommandManager;
-    private PlayerLogManager playerLogManager;
-    private CommandManager commandManager;
 
-    private final Collection<Command> commands = new HashSet<>();
+    private JDA jda;
+    private DataManager dataManager;
+    private TicketManager ticketManager;
+    private SQLite database;
+    private Config config;
+    private CommandManager commandManager;
+    private PlayerLogManager playerLogManager;
 
     @Override
     public void onEnable() {
@@ -56,33 +53,40 @@ public final class EaroBot extends Plugin {
         this.config = new Config("config.yml", getDataFolder(), this);
         this.database = new SQLite(this);
         this.dataManager = new DataManager(database);
-
-
-        setupBot(config.getString("token"), config.getString("bot-activity"));
-
+        setupBot(config.getString("token"));
         this.ticketManager = new TicketManager(jda, dataManager);
-        this.playerLogManager = new PlayerLogManager(config, jda);
-        this.consoleCommandManager = new ConsoleCommandManager(this);
         this.commandManager = new CommandManager(this);
         this.commandManager.registerCommands();
-        getProxy().getPluginManager().registerListener(this, new PlayerConnectionListener(playerLogManager));
-        getProxy().getPluginManager().registerListener(this, consoleCommandManager);
-        getLogger().log(Level.INFO, "Done! Discord bot is ready!");
-    }
 
+        this.playerLogManager = new PlayerLogManager(config, jda);
+
+
+        registerBungeeListener();
+        getLogger().log(Level.INFO, "Done! Discord bot is ready!");
+
+
+    }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        //false means offline
+        if (database != null) {
+            database.close();
+        }
+
         ticketManager.closeAllTickets();
-        database.close();
-        jda.shutdown();
-        this.jda = null;
-        getLogger().log(Level.INFO, "Shutting down...");
     }
 
-    private void setupBot(String token, String activity) {
-        connectToDiscord(token, activity);
+
+    private void registerBungeeListener() {
+        PluginManager pm = getProxy().getPluginManager();
+
+        pm.registerListener(this, new PlayerConnectionListener(playerLogManager));
+    }
+
+    private void setupBot(String token) {
+        connectToDiscord(token);
         registerGuilds().whenComplete((unused, throwable) -> {
             registerListener();
         });
@@ -90,34 +94,56 @@ public final class EaroBot extends Plugin {
 
     private CompletableFuture<Void> registerGuilds() {
         List<CompletableFuture<Void>> registrationFutures = new ArrayList<>();
+        Set<String> registeredGuildIds = new HashSet<>();
 
         for (Guild guild : jda.getGuilds()) {
-            CompletableFuture<Boolean> isRegisteredFuture = dataManager.isRegistered(guild.getId());
-            CompletableFuture<Void> registerFuture = isRegisteredFuture.thenComposeAsync(isRegistered -> {
-                if (!isRegistered) {
-                    return dataManager.registerGuild(guild.getId());
-                }
-                return CompletableFuture.completedFuture(null);
+
+            CompletableFuture<List<Member>> loadMembersFuture = CompletableFuture.supplyAsync(() -> guild.loadMembers().get());
+
+            CompletableFuture<Void> processMembersFuture = loadMembersFuture.thenAcceptAsync(members -> {
+                /*for (Member guildUser : members) {
+                    CompletableFuture<Void> registerWarnFuture = dataManager.registerWarnUser(dataManager.getWarnDatabaseKey(guild, guildUser));
+                    registrationFutures.add(registerWarnFuture);
+                }*/
+                registeredGuildIds.add(guild.getId());
             });
-            registrationFutures.add(registerFuture);
+
+            registrationFutures.add(processMembersFuture);
         }
+
+        for (Guild guild : jda.getGuilds()) {
+            if (!registeredGuildIds.contains(guild.getId())) {
+                CompletableFuture<Void> registerGuildFuture = dataManager.registerGuild(guild.getId());
+                registrationFutures.add(registerGuildFuture);
+            }
+        }
+
         return CompletableFuture.allOf(registrationFutures.toArray(new CompletableFuture[0]));
     }
 
 
     private void registerListener() {
         jda.addEventListener(new GuildJoinListener(commandManager));
-        jda.addEventListener(new UserJoinLeaveListener(dataManager, jda));
         jda.addEventListener(new MessageReceiveListener(dataManager));
-        jda.addEventListener(new TicketButtonListener(ticketManager));
+        jda.addEventListener(new UserJoinLeaveListener(dataManager, jda));
+        jda.addEventListener(new TicketActionListener(ticketManager, dataManager));
+        //jda.addEventListener(new ButtonListener(dataManager));
+        jda.addEventListener(new FollowUpMenuListener(ticketManager));
     }
 
-    private void connectToDiscord(String token, String activity) {
+    private void connectToDiscord(String token) {
+        //Currently buggy, commend out
+        /*if (alreadyOnline()) {
+            getLogger().log(Level.SEVERE, "*** Another host is already connected to this bot ***");
+            getLogger().log(Level.SEVERE, "*** Bot will NOT connect, plugin will be disabled! ***");
+            this.onDisable();
+            return;
+        }*/
         try {
             this.jda = JDABuilder.createDefault(token)
                     .setEnabledIntents(Arrays.asList(GatewayIntent.values()))
                     .setBulkDeleteSplittingEnabled(false)
-                    .setActivity(Activity.playing(activity))
+                    .setActivity(Activity.playing("HG..."))
                     .setStatus(OnlineStatus.ONLINE)
                     .build();
         } catch (InvalidTokenException e) {
@@ -129,6 +155,7 @@ public final class EaroBot extends Plugin {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     public void loadConfig(String name) {
@@ -147,16 +174,58 @@ public final class EaroBot extends Plugin {
         }
     }
 
+    private boolean alreadyOnline() {
+        String token = config.getString("token");
+        String id = config.getString("user-id");
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("https://discord.com/api/v10/users/" + id)
+                .header("Authorization", "Bot " + token)
+                .build();
+
+        boolean online = false;
+        try {
+            Response response = client.newCall(request).execute();
+            int statusCode = response.code();
+
+            //Status code 200 means bot is online...
+            online = statusCode == 200;
+            response.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return online;
+    }
+
 
     public DataManager getDataManager() {
         return dataManager;
+    }
+
+    public SQLite getDatabase() {
+        return database;
+    }
+
+    public Config getConfig() {
+        return config;
     }
 
     public JDA getJda() {
         return jda;
     }
 
-    public Config getConfig() {
-        return config;
+    public TicketManager getTicketManager() {
+        return ticketManager;
+    }
+
+
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public PlayerLogManager getPlayerLogManager() {
+        return playerLogManager;
     }
 }
