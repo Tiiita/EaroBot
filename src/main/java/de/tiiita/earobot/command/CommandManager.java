@@ -39,6 +39,7 @@ public class CommandManager {
         jda.addEventListener(new ReClaimCommand(ticketManager));
         jda.addEventListener(new SetAutoRoleCommand(dataManager));
         jda.addEventListener(new SetupTicketCommand(dataManager));
+        jda.addEventListener(new MessageCommand());
     }
 
 
@@ -69,8 +70,8 @@ public class CommandManager {
                 .addOption(OptionType.ROLE, "ticket-role", "Setup the ticket listening role.", true)
                 .queue();
         registerCommand(guildId,"set-autorole", "Set the role every new user should get automatically.");
+        registerCommand(guildId, "message", "Send a message that looks like the bot has written.");
     }
-
     private CommandCreateAction registerCommand(@NotNull String guildId, @NotNull String name, @NotNull String description) {
         Guild guildById = jda.getGuildById(guildId);
         if (guildById == null) throw new IllegalArgumentException("Could not find any guild with id: " + guildId);
