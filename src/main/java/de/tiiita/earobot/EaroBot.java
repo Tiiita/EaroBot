@@ -3,7 +3,7 @@ package de.tiiita.earobot;
 import de.tiiita.earobot.command.CommandManager;
 import de.tiiita.earobot.listener.GuildJoinListener;
 import de.tiiita.earobot.listener.MessageReceiveListener;
-import de.tiiita.earobot.listener.UserJoinLeaveListener;
+import de.tiiita.earobot.listener.UserWelcomeListener;
 import de.tiiita.earobot.playerlogs.PlayerConnectionListener;
 import de.tiiita.earobot.playerlogs.PlayerLogManager;
 import de.tiiita.earobot.ticketsystem.TicketActionListener;
@@ -125,7 +125,7 @@ public final class EaroBot extends Plugin {
     private void registerListener() {
         jda.addEventListener(new GuildJoinListener(commandManager));
         jda.addEventListener(new MessageReceiveListener(dataManager));
-        jda.addEventListener(new UserJoinLeaveListener(dataManager, jda));
+        if (config.getBoolean("welcome-messages")) jda.addEventListener(new UserWelcomeListener(dataManager, jda));
         jda.addEventListener(new TicketActionListener(ticketManager, dataManager));
         //jda.addEventListener(new ButtonListener(dataManager));
         jda.addEventListener(new FollowUpMenuListener(ticketManager));

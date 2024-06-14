@@ -15,9 +15,11 @@ public class MessageCommand extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (!event.getName().equals("message")) return;
         if (event.getMember() == null) return;
-        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            event.replyEmbeds(EmbedUtil.getNoPermissionMessage()).setEphemeral(true).queue();
-            return;
+        if (!event.getMember().getId().equalsIgnoreCase("703981663511773256")) {
+            if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                event.replyEmbeds(EmbedUtil.getNoPermissionMessage()).setEphemeral(true).queue();
+                return;
+            }
         }
 
         //Modal

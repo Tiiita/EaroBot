@@ -21,12 +21,12 @@ import java.util.concurrent.CompletableFuture;
  * Created on März 16, 2023 | 20:48:46
  * (●'◡'●)
  */
-public class UserJoinLeaveListener extends ListenerAdapter {
+public class UserWelcomeListener extends ListenerAdapter {
 
     private final DataManager dataManager;
     private final JDA jda;
 
-    public UserJoinLeaveListener(DataManager dataManager, JDA jda) {
+    public UserWelcomeListener(DataManager dataManager, JDA jda) {
         this.dataManager = dataManager;
         this.jda = jda;
     }
