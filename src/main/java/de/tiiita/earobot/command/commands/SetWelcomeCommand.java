@@ -7,10 +7,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import de.tiiita.earobot.util.Config;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
 
 /**
  * Created on März 16, 2023 | 17:29:03

@@ -9,9 +9,9 @@ import de.tiiita.earobot.playerlogs.PlayerLogManager;
 import de.tiiita.earobot.ticketsystem.TicketActionListener;
 import de.tiiita.earobot.ticketsystem.TicketManager;
 import de.tiiita.earobot.ticketsystem.ticket.followup.FollowUpMenuListener;
-import de.tiiita.earobot.util.Config;
 import de.tiiita.earobot.util.database.DataManager;
 import de.tiiita.earobot.util.database.SQLite;
+import de.tiiita.minecraft.bungee.config.BungeeConfig;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -22,16 +22,8 @@ import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
@@ -41,7 +33,7 @@ public final class EaroBot extends Plugin {
     private DataManager dataManager;
     private TicketManager ticketManager;
     private SQLite database;
-    private Config config;
+    private BungeeConfig config;
     private CommandManager commandManager;
     private PlayerLogManager playerLogManager;
 
@@ -49,8 +41,8 @@ public final class EaroBot extends Plugin {
     public void onEnable() {
         // Plugin startup logic
         getLogger().log(Level.INFO, "The Discord bot is starting...");
-        loadConfig("config.yml");
-        this.config = new Config("config.yml", getDataFolder(), this);
+        this.config = new BungeeConfig("config.yml", this);
+
         this.database = new SQLite(this);
         this.dataManager = new DataManager(database);
         setupBot(config.getString("token"));
@@ -158,47 +150,6 @@ public final class EaroBot extends Plugin {
 
     }
 
-    public void loadConfig(String name) {
-        if (!getDataFolder().exists()) {
-            getDataFolder().mkdir();
-        }
-
-        File file = new File(this.getDataFolder(), name);
-
-        if (!file.exists()) {
-            try (InputStream in = getResourceAsStream(name)) {
-                Files.copy(in, file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private boolean alreadyOnline() {
-        String token = config.getString("token");
-        String id = config.getString("user-id");
-
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("https://discord.com/api/v10/users/" + id)
-                .header("Authorization", "Bot " + token)
-                .build();
-
-        boolean online = false;
-        try {
-            Response response = client.newCall(request).execute();
-            int statusCode = response.code();
-
-            //Status code 200 means bot is online...
-            online = statusCode == 200;
-            response.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return online;
-    }
-
 
     public DataManager getDataManager() {
         return dataManager;
@@ -208,7 +159,7 @@ public final class EaroBot extends Plugin {
         return database;
     }
 
-    public Config getConfig() {
+    public BungeeConfig getConfig() {
         return config;
     }
 

@@ -1,7 +1,6 @@
 package de.tiiita.earobot.command.commands;
 
 import de.tiiita.earobot.util.Columns;
-import de.tiiita.earobot.util.Config;
 import de.tiiita.earobot.util.EmbedUtil;
 import de.tiiita.earobot.util.database.DataManager;
 import net.dv8tion.jda.api.Permission;
@@ -9,8 +8,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
 
 /**
  * Created on März 16, 2023 | 17:52:37

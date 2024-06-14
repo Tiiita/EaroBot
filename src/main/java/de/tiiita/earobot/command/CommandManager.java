@@ -5,8 +5,8 @@ import de.tiiita.earobot.command.commands.*;
 import de.tiiita.earobot.ticketsystem.SetupTicketCommand;
 import de.tiiita.earobot.ticketsystem.TicketManager;
 import de.tiiita.earobot.ticketsystem.command.ReClaimCommand;
-import de.tiiita.earobot.util.Config;
 import de.tiiita.earobot.util.database.DataManager;
+import de.tiiita.minecraft.bungee.config.BungeeConfig;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -23,7 +23,7 @@ public class CommandManager {
 
     private final DataManager dataManager;
     private final JDA jda;
-    private final Config config;
+    private final BungeeConfig config;
     private final TicketManager ticketManager;
 
     public CommandManager(EaroBot bot) {

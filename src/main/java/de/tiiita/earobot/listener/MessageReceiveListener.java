@@ -6,12 +6,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import de.tiiita.earobot.util.Config;
-import net.md_5.bungee.api.ProxyServer;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
-import java.util.logging.Level;
 
 /**
  * Created on März 15, 2023 | 21:46:50

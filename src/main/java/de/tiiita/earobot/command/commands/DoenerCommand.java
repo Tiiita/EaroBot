@@ -1,17 +1,10 @@
 package de.tiiita.earobot.command.commands;
 
-import de.tiiita.earobot.util.Collections;
-import de.tiiita.earobot.util.Config;
-import de.tiiita.earobot.util.EmbedUtil;
-import net.dv8tion.jda.api.Permission;
+import de.tiiita.minecraft.bungee.config.BungeeConfig;
+import de.tiiita.util.Collections;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on Mai 20, 2023 | 19:31:11
@@ -19,9 +12,9 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class DoenerCommand extends ListenerAdapter {
 
-    private final Config config;
+    private final BungeeConfig config;
 
-    public DoenerCommand(Config config) {
+    public DoenerCommand(BungeeConfig config) {
         this.config = config;
     }
 
